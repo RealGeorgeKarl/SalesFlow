@@ -55,7 +55,7 @@ export const useProducts = (): UseProductsReturn => {
               name: productData.name,
               description: productData.description,
               price: parseFloat(productData.price || '0'),
-              stock_quantity: productData.stock_quantity || 0,
+              quantity: productData.quantity || 0,
               category_id: categoryData.category_id,
               category: category,
               is_active: productData.is_active !== false,
