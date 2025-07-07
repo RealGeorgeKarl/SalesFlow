@@ -33,6 +33,7 @@ export const useSaleData = (): UseSaleDataReturn => {
 
       if (data && data.length > 0) {
         const userData = data[0].get_user_data;
+        console.log(userData);
         
         // Format customers
         const formattedCustomers: Customer[] = userData.customers.map((customer: any) => ({
