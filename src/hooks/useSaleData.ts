@@ -28,6 +28,7 @@ export const useSaleData = (): UseSaleDataReturn => {
 
     try {
       const { data, error } = await supabase.rpc('get_user_data');
+        console.log(data);
 
       if (error) throw error;
 
