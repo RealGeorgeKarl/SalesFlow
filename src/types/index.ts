@@ -157,3 +157,4 @@ export interface PaymentSchedule {
 export interface RpcResult {
   success: boolean;
   message: string;
+}
