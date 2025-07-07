@@ -1,20 +1,23 @@
 import React from 'react';
-import { CheckCircle, User, ShoppingCart, CreditCard, FileText, Printer } from 'lucide-react';
+import { CheckCircle, User, ShoppingCart, CreditCard, FileText, Printer, Loader2 } from 'lucide-react';
 import { NewSaleData } from '../NewSale';
+import { useAuth } from '../../../contexts/AuthContext';
 
 interface ConfirmationStepProps {
   saleData: NewSaleData;
-  onComplete: () => void;
+  onCompleteSale: () => Promise<void>;
+  isCompletingSale: boolean;
 }
 
-const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ saleData, onComplete }) => {
+const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ saleData, onCompleteSale, isCompletingSale }) => {
+  const { persona } = useAuth();
+  
   const handlePrint = () => {
     window.print();
   };
 
-  const handleComplete = () => {
-    onComplete();
-    // In a real application, this would redirect to the sales list or dashboard
+  const handleComplete = async () => {
+    await onCompleteSale();
   };
 
   return (
@@ -65,6 +68,9 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ saleData, onComplet
             <h3 className="text-lg font-medium text-gray-900">Sale Details</h3>
           </div>
           <div className="space-y-2">
+            <p className="text-sm">
+              <span className="font-medium">Seller:</span> {persona?.name}
+            </p>
             <p className="text-sm">
               <span className="font-medium">Payment Type:</span> {saleData.paymentType}
             </p>
@@ -117,6 +123,17 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ saleData, onComplet
             <h3 className="text-lg font-medium text-gray-900">Payment Information</h3>
           </div>
           <div className="space-y-2">
+            <p className="text-sm">
+              <span className="font-medium">Payment Method Type:</span> {saleData.paymentMethodType}
+            </p>
+            <p className="text-sm">
+              <span className="font-medium">Payment Method:</span> {saleData.paymentMethod}
+            </p>
+            {saleData.referenceCode && (
+              <p className="text-sm">
+                <span className="font-medium">Reference Code:</span> {saleData.referenceCode}
+              </p>
+            )}
             <p className="text-sm">
               <span className="font-medium">Payment Type:</span> {saleData.paymentType}
             </p>
@@ -172,10 +189,20 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ saleData, onComplet
         </button>
         <button
           onClick={handleComplete}
+          disabled={isCompletingSale}
           className="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700"
         >
-          <CheckCircle className="h-5 w-5 mr-2" />
-          Complete Sale
+          {isCompletingSale ? (
+            <>
+              <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+              Processing Sale...
+            </>
+          ) : (
+            <>
+              <CheckCircle className="h-5 w-5 mr-2" />
+              Complete Sale
+            </>
+          )}
         </button>
       </div>
     </div>
