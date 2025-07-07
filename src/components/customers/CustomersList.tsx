@@ -1,79 +1,143 @@
 import React, { useState } from 'react';
-import { Search, Plus, User, Mail, Phone, Edit, Trash2 } from 'lucide-react';
-import { Customer } from '../../types';
+import { Search, Plus, User, Mail, Phone, Edit, Trash2, MapPin, Calendar, DollarSign, ShoppingCart, Loader2, AlertCircle, X } from 'lucide-react';
+import { useCustomers } from '../../hooks/useCustomers';
+import { Customer, SocialMedia } from '../../types';
 
 const CustomersList: React.FC = () => {
+  const { customers, isLoading, error, addCustomer, editCustomer, deleteCustomer } = useCustomers();
   const [searchQuery, setSearchQuery] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const [formLoading, setFormLoading] = useState(false);
+  const [formError, setFormError] = useState('');
 
-  // Mock customers data
-  const customers: Customer[] = [
-    {
-      id: '1',
-      first_name: 'John',
-      last_name: 'Smith',
-      email: 'john.smith@email.com',
-      phone: '+1 (555) 123-4567',
-      address: '123 Main St, City, State 12345',
-      created_at: '2024-01-01T00:00:00Z',
-    },
-    {
-      id: '2',
-      first_name: 'Sarah',
-      last_name: 'Johnson',
-      email: 'sarah.johnson@email.com',
-      phone: '+1 (555) 987-6543',
-      address: '456 Oak Ave, City, State 12345',
-      created_at: '2024-01-02T00:00:00Z',
-    },
-    {
-      id: '3',
-      first_name: 'Mike',
-      last_name: 'Wilson',
-      email: 'mike.wilson@email.com',
-      phone: '+1 (555) 456-7890',
-      address: '789 Pine Rd, City, State 12345',
-      created_at: '2024-01-03T00:00:00Z',
-    },
-    {
-      id: '4',
-      first_name: 'Emily',
-      last_name: 'Davis',
-      email: 'emily.davis@email.com',
-      phone: '+1 (555) 321-9876',
-      address: '321 Elm St, City, State 12345',
-      created_at: '2024-01-04T00:00:00Z',
-    },
-  ];
+  // Form state
+  const [formData, setFormData] = useState({
+    first_name: '',
+    middle_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    address: '',
+    birth: '',
+    other_info: '',
+    social_media: [] as SocialMedia[],
+  });
 
   const filteredCustomers = customers.filter(customer =>
-    `${customer.first_name} ${customer.last_name}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    `${customer.first_name} ${customer.middle_name || ''} ${customer.last_name}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
     customer.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     customer.phone?.includes(searchQuery)
   );
 
   const handleEdit = (customer: Customer) => {
     setEditingCustomer(customer);
+    setFormData({
+      first_name: customer.first_name,
+      middle_name: customer.middle_name || '',
+      last_name: customer.last_name,
+      email: customer.email || '',
+      phone: customer.phone || '',
+      address: customer.address || '',
+      birth: customer.birth || '',
+      other_info: customer.other_info || '',
+      social_media: customer.social_media || [],
+    });
     setShowForm(true);
   };
 
-  const handleDelete = (customerId: string) => {
+  const handleDelete = async (customerId: number) => {
     if (window.confirm('Are you sure you want to delete this customer?')) {
-      // Handle delete logic here
-      console.log('Deleting customer:', customerId);
+      const success = await deleteCustomer(customerId);
+      if (!success) {
+        alert('Failed to delete customer. Please try again.');
+      }
     }
   };
 
   const handleAddNew = () => {
     setEditingCustomer(null);
+    setFormData({
+      first_name: '',
+      middle_name: '',
+      last_name: '',
+      email: '',
+      phone: '',
+      address: '',
+      birth: '',
+      other_info: '',
+      social_media: [],
+    });
     setShowForm(true);
   };
 
   const handleCloseForm = () => {
     setShowForm(false);
     setEditingCustomer(null);
+    setFormError('');
+    setFormLoading(false);
   };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormLoading(true);
+    setFormError('');
+
+    try {
+      let success = false;
+      if (editingCustomer) {
+        success = await editCustomer(editingCustomer.id, formData);
+      } else {
+        success = await addCustomer(formData);
+      }
+
+      if (success) {
+        handleCloseForm();
+      } else {
+        setFormError('Operation failed. Please try again.');
+      }
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const addSocialMedia = () => {
+    setFormData(prev => ({
+      ...prev,
+      social_media: [...prev.social_media, { platform: '', account: '' }],
+    }));
+  };
+
+  const updateSocialMedia = (index: number, field: keyof SocialMedia, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      social_media: prev.social_media.map((item, i) =>
+        i === index ? { ...item, [field]: value } : item
+      ),
+    }));
+  };
+
+  const removeSocialMedia = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      social_media: prev.social_media.filter((_, i) => i !== index),
+    }));
+  };
+
+  if (isLoading) {
+    return (
+      <div className="p-6 max-w-7xl mx-auto">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+            <p className="text-lg text-gray-600">Loading customers...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -91,6 +155,16 @@ const CustomersList: React.FC = () => {
           Add Customer
         </button>
       </div>
+
+      {/* Error Display */}
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-center space-x-2">
+            <AlertCircle className="h-5 w-5 text-red-600" />
+            <span className="text-red-700">{error}</span>
+          </div>
+        </div>
+      )}
 
       {/* Search */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
@@ -117,7 +191,7 @@ const CustomersList: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-medium text-gray-900">
-                    {customer.first_name} {customer.last_name}
+                    {customer.first_name} {customer.middle_name && `${customer.middle_name} `}{customer.last_name}
                   </h3>
                   <p className="text-sm text-gray-500">
                     Customer since {new Date(customer.created_at).toLocaleDateString()}
@@ -155,20 +229,36 @@ const CustomersList: React.FC = () => {
               )}
               {customer.address && (
                 <div className="flex items-start space-x-2">
-                  <User className="h-4 w-4 text-gray-400 mt-0.5" />
+                  <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
                   <span className="text-sm text-gray-600">{customer.address}</span>
+                </div>
+              )}
+              {customer.birth && (
+                <div className="flex items-center space-x-2">
+                  <Calendar className="h-4 w-4 text-gray-400" />
+                  <span className="text-sm text-gray-600">
+                    Born: {new Date(customer.birth).toLocaleDateString()}
+                  </span>
                 </div>
               )}
             </div>
 
             <div className="mt-4 pt-4 border-t border-gray-200">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-500">Total Sales</span>
-                <span className="font-medium text-gray-900">$2,450</span>
+                <div className="flex items-center space-x-1">
+                  <DollarSign className="h-4 w-4 text-gray-400" />
+                  <span className="text-gray-500">Total Sales</span>
+                </div>
+                <span className="font-medium text-gray-900">
+                  ${customer.total_sales?.toFixed(2) || '0.00'}
+                </span>
               </div>
               <div className="flex items-center justify-between text-sm mt-1">
-                <span className="text-gray-500">Active Sales</span>
-                <span className="font-medium text-gray-900">2</span>
+                <div className="flex items-center space-x-1">
+                  <ShoppingCart className="h-4 w-4 text-gray-400" />
+                  <span className="text-gray-500">Active Sales</span>
+                </div>
+                <span className="font-medium text-gray-900">{customer.active_sales || 0}</span>
               </div>
             </div>
           </div>
@@ -178,21 +268,44 @@ const CustomersList: React.FC = () => {
       {/* Customer Form Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              {editingCustomer ? 'Edit Customer' : 'Add New Customer'}
-            </h2>
-            <form className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">
+                {editingCustomer ? 'Edit Customer' : 'Add New Customer'}
+              </h2>
+              <button
+                onClick={handleCloseForm}
+                className="p-2 hover:bg-gray-100 rounded-lg"
+              >
+                <X className="h-5 w-5 text-gray-600" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     First Name *
                   </label>
                   <input
                     type="text"
-                    defaultValue={editingCustomer?.first_name || ''}
+                    value={formData.first_name}
+                    onChange={(e) => setFormData(prev => ({ ...prev, first_name: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
+                    disabled={formLoading}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Middle Name
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.middle_name}
+                    onChange={(e) => setFormData(prev => ({ ...prev, middle_name: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled={formLoading}
                   />
                 </div>
                 <div>
@@ -201,55 +314,156 @@ const CustomersList: React.FC = () => {
                   </label>
                   <input
                     type="text"
-                    defaultValue={editingCustomer?.last_name || ''}
+                    value={formData.last_name}
+                    onChange={(e) => setFormData(prev => ({ ...prev, last_name: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
+                    disabled={formLoading}
                   />
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  defaultValue={editingCustomer?.email || ''}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled={formLoading}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Phone
+                  </label>
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled={formLoading}
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Phone
-                </label>
-                <input
-                  type="tel"
-                  defaultValue={editingCustomer?.phone || ''}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Address
                 </label>
                 <textarea
-                  defaultValue={editingCustomer?.address || ''}
-                  rows={3}
+                  value={formData.address}
+                  onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
+                  rows={2}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={formLoading}
                 />
               </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Birth Date
+                  </label>
+                  <input
+                    type="date"
+                    value={formData.birth}
+                    onChange={(e) => setFormData(prev => ({ ...prev, birth: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled={formLoading}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Other Info
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.other_info}
+                    onChange={(e) => setFormData(prev => ({ ...prev, other_info: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled={formLoading}
+                  />
+                </div>
+              </div>
+
+              {/* Social Media Section */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Social Media
+                  </label>
+                  <button
+                    type="button"
+                    onClick={addSocialMedia}
+                    className="text-sm text-blue-600 hover:text-blue-700"
+                    disabled={formLoading}
+                  >
+                    + Add Social Media
+                  </button>
+                </div>
+                {formData.social_media.map((social, index) => (
+                  <div key={index} className="flex items-center space-x-2 mb-2">
+                    <input
+                      type="text"
+                      placeholder="Platform (e.g., facebook)"
+                      value={social.platform}
+                      onChange={(e) => updateSocialMedia(index, 'platform', e.target.value)}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      disabled={formLoading}
+                    />
+                    <input
+                      type="url"
+                      placeholder="Account URL"
+                      value={social.account}
+                      onChange={(e) => updateSocialMedia(index, 'account', e.target.value)}
+                      className="flex-2 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      disabled={formLoading}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeSocialMedia(index)}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                      disabled={formLoading}
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {formError && (
+                <div className="flex items-center space-x-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <AlertCircle className="h-5 w-5 text-red-600" />
+                  <span className="text-sm text-red-700">{formError}</span>
+                </div>
+              )}
+
               <div className="flex justify-end space-x-3 pt-4">
                 <button
                   type="button"
                   onClick={handleCloseForm}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  disabled={formLoading}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  disabled={formLoading || !formData.first_name || !formData.last_name}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center"
                 >
-                  {editingCustomer ? 'Update' : 'Create'} Customer
+                  {formLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      {editingCustomer ? 'Updating...' : 'Creating...'}
+                    </>
+                  ) : (
+                    editingCustomer ? 'Update Customer' : 'Create Customer'
+                  )}
                 </button>
               </div>
             </form>

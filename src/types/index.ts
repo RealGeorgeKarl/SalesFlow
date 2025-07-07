@@ -17,13 +17,24 @@ export interface SmsAccountResponse {
 }
 
 export interface Customer {
-  id: string;
+  id: number;
   first_name: string;
+  middle_name?: string;
   last_name: string;
   email?: string;
   phone?: string;
   address?: string;
+  social_media?: SocialMedia[];
+  birth?: string;
+  other_info?: string;
+  total_sales?: number;
+  active_sales?: number;
   created_at: string;
+}
+
+export interface SocialMedia {
+  platform: string;
+  account: string;
 }
 
 export interface Category {

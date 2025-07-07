@@ -4,7 +4,7 @@ import CustomerStep from './steps/CustomerStep';
 import ProductStep from './steps/ProductStep';
 import PaymentStep from './steps/PaymentStep';
 import ConfirmationStep from './steps/ConfirmationStep';
-import { Customer, CartItem, Sale } from '../../types';
+import { Customer, CartItem, Sale, PaymentSchedule } from '../../types';
 
 export interface NewSaleData {
   customer: Customer | null;
