@@ -12,6 +12,7 @@ import SalesList from './components/sales/SalesList';
 import CustomersList from './components/customers/CustomersList';
 import PersonaManagement from './components/admin/PersonaManagement';
 import SubscriptionDetails from './components/admin/SubscriptionDetails';
+import ProductManagement from './components/products/ProductManagement';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -65,6 +66,7 @@ function App() {
             <Route path="new-sale" element={<NewSale />} />
             <Route path="sales" element={<SalesList />} />
             <Route path="customers" element={<CustomersList />} />
+            <Route path="products" element={<ProductManagement />} />
             <Route path="persona-management" element={<PersonaManagement />} />
             <Route path="subscription" element={<SubscriptionDetails />} />
             {/* Add more routes as needed */}

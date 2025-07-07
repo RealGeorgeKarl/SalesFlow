@@ -38,19 +38,19 @@ export interface SocialMedia {
 }
 
 export interface Category {
-  id: string;
+  id: number;
   name: string;
   description?: string;
   created_at: string;
 }
 
 export interface Product {
-  id: string;
+  id: number;
   name: string;
   description?: string;
   price: number;
   stock_quantity: number;
-  category_id?: string;
+  category_id?: number;
   category?: Category;
   is_active: boolean;
   created_at: string;
