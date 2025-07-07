@@ -137,38 +137,15 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ saleData, onComplet
             <p className="text-sm">
               <span className="font-medium">Payment Type:</span> {saleData.paymentType}
             </p>
-            {(saleData.paymentType === 'Down Payment + Installments' || 
-              (saleData.paymentType === 'Custom Installment' && saleData.customDownPaymentAmount && saleData.customDownPaymentAmount > 0)) && (
+            {saleData.paymentType === 'Down Payment + Installments' && (
               <p className="text-sm">
-                <span className="font-medium">Down Payment:</span> ${(
-                  saleData.paymentType === 'Down Payment + Installments' 
-                    ? saleData.downPaymentAmount 
-                    : saleData.customDownPaymentAmount || 0
-                ).toFixed(2)}
+                <span className="font-medium">Down Payment:</span> ${saleData.downPaymentAmount.toFixed(2)}
               </p>
             )}
             {(saleData.paymentType === 'Down Payment + Installments' || saleData.paymentType === 'Installment Only') && (
               <p className="text-sm">
                 <span className="font-medium">Installment Plan:</span> Selected
               </p>
-            )}
-            {saleData.paymentType === 'Custom Installment' && (
-              <div className="text-sm space-y-1">
-                <p>
-                  <span className="font-medium">Custom Plan:</span> {saleData.customNumInstallments} installments
-                </p>
-                <p>
-                  <span className="font-medium">Interest Rate:</span> {saleData.customInterestRate}%
-                </p>
-                <p>
-                  <span className="font-medium">Frequency:</span> Every {saleData.customFrequencyInterval} {saleData.customFrequencyUnit}(s)
-                </p>
-                {saleData.customStartDate && (
-                  <p>
-                    <span className="font-medium">Start Date:</span> {new Date(saleData.customStartDate).toLocaleDateString()}
-                  </p>
-                )}
-              </div>
             )}
             <p className="text-sm">
               <span className="font-medium">Status:</span> 
