@@ -28,16 +28,15 @@ export const useSaleData = (): UseSaleDataReturn => {
 
     try {
       const { data, error } = await supabase.rpc('get_user_data');
-        console.log(data);
+        console.log(data.customers);
 
       if (error) throw error;
 
       if (data && data.length > 0) {
-        const userData = data[0].get_user_data;
-        console.log(userData);
+        
         
         // Format customers
-        const formattedCustomers: Customer[] = userData.customers.map((customer: any) => ({
+        const formattedCustomers: Customer[] = data.customers.map((customer: any) => ({
           id: customer.id,
           first_name: customer.first_name,
           middle_name: customer.middle_name,
@@ -54,7 +53,7 @@ export const useSaleData = (): UseSaleDataReturn => {
         }));
 
         // Format products
-        const formattedProducts: Product[] = userData.products.map((product: any) => ({
+        const formattedProducts: Product[] = data.products.map((product: any) => ({
           id: product.id,
           name: product.name,
           description: product.description,
