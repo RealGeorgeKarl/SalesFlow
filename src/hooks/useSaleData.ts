@@ -36,21 +36,7 @@ export const useSaleData = (): UseSaleDataReturn => {
         
         
         // Format customers
-        const formattedCustomers: Customer[] = data.customers.map((customer: any) => ({
-          id: customer.id,
-          first_name: customer.first_name,
-          middle_name: customer.middle_name,
-          last_name: customer.last_name,
-          email: customer.email,
-          phone: customer.phone,
-          address: customer.address,
-          social_media: [],
-          birth: null,
-          other_info: null,
-          total_sales: 0,
-          active_sales: 0,
-          created_at: new Date().toISOString(),
-        }));
+        const formattedCustomers: Customer[] = data.customers
 
         // Format products
         const formattedProducts: Product[] = data.products.map((product: any) => ({
