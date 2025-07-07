@@ -62,10 +62,14 @@ export interface InstallmentPlan {
   description?: string;
   num_installments: number;
   interval_days: number;
+  frequency_unit?: FrequencyUnit;
+  frequency_interval?: number;
   interest_rate: number;
   is_active: boolean;
   created_at: string;
 }
+
+export type FrequencyUnit = 'day' | 'week' | 'month' | 'year';
 
 export interface Sale {
   id: string;
@@ -153,4 +157,3 @@ export interface PaymentSchedule {
 export interface RpcResult {
   success: boolean;
   message: string;
-}

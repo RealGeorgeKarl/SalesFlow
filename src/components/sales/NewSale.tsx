@@ -1,23 +1,30 @@
 import React, { useState } from 'react';
 import { ChevronRight, ChevronLeft, User, ShoppingCart, CreditCard, FileText } from 'lucide-react';
+import { useSaleData } from '../../hooks/useSaleData';
 import CustomerStep from './steps/CustomerStep';
 import ProductStep from './steps/ProductStep';
 import PaymentStep from './steps/PaymentStep';
 import ConfirmationStep from './steps/ConfirmationStep';
-import { Customer, CartItem, Sale, PaymentSchedule } from '../../types';
+import { Customer, CartItem, Sale, PaymentSchedule, FrequencyUnit } from '../../types';
 
 export interface NewSaleData {
   customer: Customer | null;
   cart: CartItem[];
   sellerName: string;
   notes: string;
-  paymentType: 'Full Payment' | 'Down Payment + Installments' | 'Installment Only';
+  paymentType: 'Full Payment' | 'Down Payment + Installments' | 'Installment Only' | 'Custom Installment';
   downPaymentAmount: number;
   installmentPlanId: string;
+  customInterestRate?: number;
+  customFrequencyUnit?: FrequencyUnit;
+  customFrequencyInterval?: number;
+  customStartDate?: string;
+  customNumInstallments?: number;
   totalAmount: number;
 }
 
 const NewSale: React.FC = () => {
+  const { customers, products, isLoading, error, addCustomer } = useSaleData();
   const [currentStep, setCurrentStep] = useState(1);
   const [saleData, setSaleData] = useState<NewSaleData>({
     customer: null,
@@ -82,6 +89,8 @@ const NewSale: React.FC = () => {
           <CustomerStep
             selectedCustomer={saleData.customer}
             onCustomerSelect={(customer) => updateSaleData({ customer })}
+            customers={customers}
+            addCustomer={addCustomer}
           />
         );
       case 2:
@@ -92,6 +101,7 @@ const NewSale: React.FC = () => {
               const totalAmount = cart.reduce((sum, item) => sum + item.total, 0);
               updateSaleData({ cart, totalAmount });
             }}
+            products={products}
           />
         );
       case 3:
@@ -116,6 +126,41 @@ const NewSale: React.FC = () => {
         return null;
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="p-6 max-w-4xl mx-auto">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-lg text-gray-600">Loading sale data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 max-w-4xl mx-auto">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center max-w-md">
+            <div className="p-4 bg-red-50 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <ShoppingCart className="h-8 w-8 text-red-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Failed to Load Data</h3>
+            <p className="text-red-600 mb-4">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 max-w-4xl mx-auto">

@@ -5,50 +5,11 @@ import { Product, CartItem } from '../../../types';
 interface ProductStepProps {
   cart: CartItem[];
   onCartUpdate: (cart: CartItem[]) => void;
+  products: Product[];
 }
 
-const ProductStep: React.FC<ProductStepProps> = ({ cart, onCartUpdate }) => {
+const ProductStep: React.FC<ProductStepProps> = ({ cart, onCartUpdate, products }) => {
   const [searchQuery, setSearchQuery] = useState('');
-
-  // Mock product data
-  const products: Product[] = [
-    {
-      id: '1',
-      name: 'Wireless Headphones',
-      description: 'Premium noise-cancelling headphones',
-      price: 299.99,
-      stock_quantity: 25,
-      is_active: true,
-      created_at: '2024-01-01T00:00:00Z',
-    },
-    {
-      id: '2',
-      name: 'Smart Watch',
-      description: 'Fitness tracking smartwatch',
-      price: 199.99,
-      stock_quantity: 15,
-      is_active: true,
-      created_at: '2024-01-02T00:00:00Z',
-    },
-    {
-      id: '3',
-      name: 'Bluetooth Speaker',
-      description: 'Portable wireless speaker',
-      price: 89.99,
-      stock_quantity: 30,
-      is_active: true,
-      created_at: '2024-01-03T00:00:00Z',
-    },
-    {
-      id: '4',
-      name: 'Laptop Stand',
-      description: 'Adjustable aluminum laptop stand',
-      price: 49.99,
-      stock_quantity: 50,
-      is_active: true,
-      created_at: '2024-01-04T00:00:00Z',
-    },
-  ];
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -141,7 +102,7 @@ const ProductStep: React.FC<ProductStepProps> = ({ cart, onCartUpdate }) => {
                           ${product.price.toFixed(2)}
                         </span>
                         <span className="text-sm text-gray-500">
-                          (Stock: {product.stock_quantity})
+                          (Stock: {product.quantity})
                         </span>
                       </div>
                     </div>
@@ -161,7 +122,7 @@ const ProductStep: React.FC<ProductStepProps> = ({ cart, onCartUpdate }) => {
                         <button
                           onClick={() => updateQuantity(product.id, getCartQuantity(product.id) + 1)}
                           className="p-1 border border-gray-300 rounded hover:bg-gray-50"
-                          disabled={getCartQuantity(product.id) >= product.stock_quantity}
+                          disabled={getCartQuantity(product.id) >= product.quantity}
                         >
                           <Plus className="h-4 w-4" />
                         </button>
@@ -170,7 +131,7 @@ const ProductStep: React.FC<ProductStepProps> = ({ cart, onCartUpdate }) => {
                       <button
                         onClick={() => addToCart(product)}
                         className="flex items-center px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
-                        disabled={product.stock_quantity === 0}
+                        disabled={product.quantity === 0}
                       >
                         <Plus className="h-4 w-4 mr-1" />
                         Add

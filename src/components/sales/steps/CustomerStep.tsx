@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { Search, Plus, User, Mail, Phone, MapPin, Calendar, Loader2, AlertCircle, X } from 'lucide-react';
-import { useCustomers } from '../../../hooks/useCustomers';
 import { Customer, SocialMedia } from '../../../types';
 
 interface CustomerStepProps {
   selectedCustomer: Customer | null;
   onCustomerSelect: (customer: Customer) => void;
+  customers: Customer[];
+  addCustomer: (customerData: Omit<Customer, 'id' | 'created_at' | 'total_sales' | 'active_sales'>) => Promise<boolean>;
 }
 
-const CustomerStep: React.FC<CustomerStepProps> = ({ selectedCustomer, onCustomerSelect }) => {
-  const { customers, isLoading, error, addCustomer } = useCustomers();
+const CustomerStep: React.FC<CustomerStepProps> = ({ selectedCustomer, onCustomerSelect, customers, addCustomer }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showNewCustomerForm, setShowNewCustomerForm] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
@@ -97,33 +97,10 @@ const CustomerStep: React.FC<CustomerStepProps> = ({ selectedCustomer, onCustome
     }));
   };
 
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-center min-h-[300px]">
-          <div className="text-center">
-            <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
-            <p className="text-gray-600">Loading customers...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Select Customer</h2>
-        
-        {/* Error Display */}
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <div className="flex items-center space-x-2">
-              <AlertCircle className="h-5 w-5 text-red-600" />
-              <span className="text-red-700">{error}</span>
-            </div>
-          </div>
-        )}
         
         {/* Search and Add Customer */}
         <div className="flex space-x-4 mb-6">
