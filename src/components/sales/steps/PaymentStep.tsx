@@ -208,20 +208,8 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
       <div>
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Payment Terms</h2>
         
-        {/* Seller Name and Notes */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Seller Name (Optional)
-            </label>
-            <input
-              type="text"
-              value={saleData.sellerName}
-              onChange={(e) => onUpdate({ sellerName: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter seller name"
-            />
-          </div>
+        {/* Notes */}
+        <div className="mb-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Notes (Optional)

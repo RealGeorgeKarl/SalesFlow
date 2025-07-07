@@ -10,7 +10,6 @@ import { Customer, CartItem, Sale, PaymentSchedule, FrequencyUnit } from '../../
 export interface NewSaleData {
   customer: Customer | null;
   cart: CartItem[];
-  sellerName: string;
   notes: string;
   paymentType: 'Full Payment' | 'Down Payment + Installments' | 'Installment Only' | 'Custom Installment';
   downPaymentAmount: number;
@@ -29,7 +28,6 @@ const NewSale: React.FC = () => {
   const [saleData, setSaleData] = useState<NewSaleData>({
     customer: null,
     cart: [],
-    sellerName: '',
     notes: '',
     paymentType: 'Full Payment',
     downPaymentAmount: 0,

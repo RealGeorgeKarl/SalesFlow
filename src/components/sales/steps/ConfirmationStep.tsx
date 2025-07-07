@@ -65,11 +65,6 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ saleData, onComplet
             <h3 className="text-lg font-medium text-gray-900">Sale Details</h3>
           </div>
           <div className="space-y-2">
-            {saleData.sellerName && (
-              <p className="text-sm">
-                <span className="font-medium">Seller:</span> {saleData.sellerName}
-              </p>
-            )}
             <p className="text-sm">
               <span className="font-medium">Payment Type:</span> {saleData.paymentType}
             </p>
