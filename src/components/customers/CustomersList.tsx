@@ -416,7 +416,7 @@ const CustomersList: React.FC = () => {
                       disabled={formLoading}
                     />
                     <input
-                      type="url"
+                      type="text"
                       placeholder="Account URL"
                       value={social.account}
                       onChange={(e) => updateSocialMedia(index, 'account', e.target.value)}
