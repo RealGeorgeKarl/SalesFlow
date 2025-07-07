@@ -34,7 +34,6 @@ export const useProducts = (): UseProductsReturn => {
 
       if (error) throw error;
 
-      console.log(data);
       const categoriesData: Category[] = [];
       const productsData: Product[] = [];
 
