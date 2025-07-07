@@ -49,7 +49,7 @@ export interface Product {
   name: string;
   description?: string;
   price: number;
-  stock_quantity: number;
+  quantity: number;
   category_id?: number;
   category?: Category;
   is_active: boolean;
