@@ -350,7 +350,7 @@ const CustomerStep: React.FC<CustomerStepProps> = ({ selectedCustomer, onCustome
                       disabled={formLoading}
                     />
                     <input
-                      type="url"
+                      type="text"
                       placeholder="Account URL"
                       value={social.account}
                       onChange={(e) => updateSocialMedia(index, 'account', e.target.value)}
