@@ -16,9 +16,15 @@ export interface NewSaleData {
   cart: CartItem[];
   sellerName: string;
   notes: string;
-  paymentType: 'Full Payment' | 'Down Payment + Installments' | 'Installment Only';
+  paymentType: 'Full Payment' | 'Down Payment + Installments' | 'Installment Only' | 'Custom Installment';
   downPaymentAmount: number;
   installmentPlanId: string;
+  customDownPaymentAmount?: number;
+  customInterestRate?: number;
+  customFrequencyUnit?: FrequencyUnit;
+  customFrequencyInterval?: number;
+  customStartDate?: string;
+  customNumInstallments?: number;
   paymentMethodType: PaymentMethodType;
   paymentMethod: PaymentMethod;
   referenceCode: string;
@@ -45,6 +51,7 @@ const NewSale: React.FC = () => {
     paymentType: 'Full Payment',
     downPaymentAmount: 0,
     installmentPlanId: '',
+    customDownPaymentAmount: 0,
     paymentMethodType: 'Cash',
     paymentMethod: 'Exact Cash',
     referenceCode: '',
@@ -129,6 +136,13 @@ const NewSale: React.FC = () => {
           rpcParams.p_number_of_installments = plan.num_installments;
           rpcParams.p_start_date_time = new Date().toISOString();
         }
+      } else if (saleData.paymentType === 'Custom Installment') {
+        rpcParams.p_down_payment = saleData.customDownPaymentAmount || 0;
+        rpcParams.p_interest_rate = (saleData.customInterestRate || 0) / 100;
+        rpcParams.p_frequency_unit = saleData.customFrequencyUnit;
+        rpcParams.p_frequency_interval = saleData.customFrequencyInterval;
+        rpcParams.p_number_of_installments = saleData.customNumInstallments;
+        rpcParams.p_start_date_time = saleData.customStartDate ? new Date(saleData.customStartDate).toISOString() : new Date().toISOString();
       }
 
       // Call the process_sale RPC function
@@ -150,6 +164,7 @@ const NewSale: React.FC = () => {
         paymentType: 'Full Payment',
         downPaymentAmount: 0,
         installmentPlanId: '',
+        customDownPaymentAmount: 0,
         paymentMethodType: 'Cash',
         paymentMethod: 'Exact Cash',
         referenceCode: '',
