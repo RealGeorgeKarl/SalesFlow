@@ -94,9 +94,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw error;
       }
 
-      // Add 15-second delay before completing login
-      await new Promise(resolve => setTimeout(resolve, 15000));
-
       // The auth state will be updated by the onAuthStateChange listener
     } catch (error) {
       setAuthState(prev => ({ ...prev, isLoading: false }));
@@ -132,9 +129,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (!validationResult?.success) {
         throw new Error(validationResult?.message || 'Invalid credentials');
       }
-
-      // Add 15-second delay before completing persona selection
-      await new Promise(resolve => setTimeout(resolve, 15000));
 
       setAuthState(prev => ({
         ...prev,
