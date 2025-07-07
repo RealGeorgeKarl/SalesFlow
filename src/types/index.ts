@@ -158,3 +158,23 @@ export interface RpcResult {
   success: boolean;
   message: string;
 }
+
+export type PaymentMethodType = 'Cash' | 'Card' | 'Online Payment' | 'Other';
+
+export type PaymentMethod = 
+  // Cash methods
+  | 'Exact Cash'
+  | 'Cash (Needs Change)'
+  // Card methods
+  | 'Visa'
+  | 'Mastercard'
+  | 'Debit Card'
+  | 'Credit Card'
+  // Online payment methods
+  | 'PayPal'
+  | 'Bank Transfer'
+  | 'Digital Wallet'
+  // Other methods
+  | 'Check'
+  | 'Money Order'
+  | 'Store Credit';

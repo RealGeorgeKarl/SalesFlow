@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { CreditCard, Calendar, DollarSign, Calculator, Clock, Percent, Hash } from 'lucide-react';
+import { CreditCard, Calendar, DollarSign, Calculator, Clock, Percent, Hash, Receipt } from 'lucide-react';
 import { NewSaleData } from '../NewSale';
-import { InstallmentPlan, FrequencyUnit } from '../../../types';
+import { InstallmentPlan, FrequencyUnit, PaymentMethodType, PaymentMethod } from '../../../types';
 
 interface PaymentSchedule {
   installment_number: number;
@@ -24,6 +24,16 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
   const [customFrequencyUnit, setCustomFrequencyUnit] = useState<FrequencyUnit>('month');
   const [customFrequencyInterval, setCustomFrequencyInterval] = useState(1);
   const [customStartDate, setCustomStartDate] = useState('');
+
+  // Payment method constants
+  const PAYMENT_METHOD_TYPES: PaymentMethodType[] = ['Cash', 'Card', 'Online Payment', 'Other'];
+  
+  const PAYMENT_METHODS_MAP: Record<PaymentMethodType, PaymentMethod[]> = {
+    'Cash': ['Exact Cash', 'Cash (Needs Change)'],
+    'Card': ['Visa', 'Mastercard', 'Debit Card', 'Credit Card'],
+    'Online Payment': ['PayPal', 'Bank Transfer', 'Digital Wallet'],
+    'Other': ['Check', 'Money Order', 'Store Credit'],
+  };
 
   // Mock installment plans
   const installmentPlans: InstallmentPlan[] = [
@@ -231,24 +241,82 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
         
         {/* Notes */}
         <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Notes (Optional)
+          </label>
+          <input
+            type="text"
+            value={saleData.notes}
+            onChange={(e) => onUpdate({ notes: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Add any notes"
+          />
+        </div>
+
+        {/* Payment Method Selection */}
+        <div className="mb-6">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Payment Method</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Payment Method Type
+              </label>
+              <select
+                value={saleData.paymentMethodType}
+                onChange={(e) => {
+                  const newType = e.target.value as PaymentMethodType;
+                  const firstMethod = PAYMENT_METHODS_MAP[newType][0];
+                  onUpdate({ 
+                    paymentMethodType: newType,
+                    paymentMethod: firstMethod
+                  });
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {PAYMENT_METHOD_TYPES.map((type) => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Payment Method
+              </label>
+              <select
+                value={saleData.paymentMethod}
+                onChange={(e) => onUpdate({ paymentMethod: e.target.value as PaymentMethod })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {PAYMENT_METHODS_MAP[saleData.paymentMethodType].map((method) => (
+                  <option key={method} value={method}>{method}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Notes (Optional)
+              Reference Code (Optional)
             </label>
-            <input
-              type="text"
-              value={saleData.notes}
-              onChange={(e) => onUpdate({ notes: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Add any notes"
-            />
+            <div className="relative">
+              <Receipt className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
+                type="text"
+                value={saleData.referenceCode}
+                onChange={(e) => onUpdate({ referenceCode: e.target.value })}
+                className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Transaction ID, Check number, etc."
+              />
+            </div>
           </div>
         </div>
 
         {/* Payment Type Selection */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-3">
-            Payment Type
+            Payment Terms
           </label>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {(['Full Payment', 'Down Payment + Installments', 'Installment Only', 'Custom Installment'] as const).map((type) => (

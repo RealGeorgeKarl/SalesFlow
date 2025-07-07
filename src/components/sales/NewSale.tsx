@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, User, ShoppingCart, CreditCard, FileText } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
 import { useSaleData } from '../../hooks/useSaleData';
 import CustomerStep from './steps/CustomerStep';
 import ProductStep from './steps/ProductStep';
 import PaymentStep from './steps/PaymentStep';
 import ConfirmationStep from './steps/ConfirmationStep';
-import { Customer, CartItem, Sale, PaymentSchedule, FrequencyUnit } from '../../types';
+import { Customer, CartItem, Sale, PaymentSchedule, FrequencyUnit, PaymentMethodType, PaymentMethod, RpcResult } from '../../types';
 
 export interface NewSaleData {
   customer: Customer | null;
   cart: CartItem[];
+  sellerName: string;
   notes: string;
   paymentType: 'Full Payment' | 'Down Payment + Installments' | 'Installment Only' | 'Custom Installment';
   downPaymentAmount: number;
@@ -20,20 +24,30 @@ export interface NewSaleData {
   customFrequencyInterval?: number;
   customStartDate?: string;
   customNumInstallments?: number;
+  paymentMethodType: PaymentMethodType;
+  paymentMethod: PaymentMethod;
+  referenceCode: string;
   totalAmount: number;
 }
 
 const NewSale: React.FC = () => {
+  const navigate = useNavigate();
+  const { persona } = useAuth();
   const { customers, products, isLoading, error, addCustomer } = useSaleData();
   const [currentStep, setCurrentStep] = useState(1);
+  const [isCompletingSale, setIsCompletingSale] = useState(false);
   const [saleData, setSaleData] = useState<NewSaleData>({
     customer: null,
     cart: [],
+    sellerName: persona?.name || '',
     notes: '',
     paymentType: 'Full Payment',
     downPaymentAmount: 0,
     installmentPlanId: '',
     customDownPaymentAmount: 0,
+    paymentMethodType: 'Cash',
+    paymentMethod: 'Exact Cash',
+    referenceCode: '',
     totalAmount: 0,
   });
 
@@ -66,6 +80,131 @@ const NewSale: React.FC = () => {
   const updateSaleData = (updates: Partial<NewSaleData>) => {
     setSaleData(prev => ({ ...prev, ...updates }));
   };
+
+  const handleCompleteSale = async () => {
+    setIsCompletingSale(true);
+    
+    try {
+      // Prepare items for the RPC call
+      const items = saleData.cart.map(item => ({
+        product_id: item.product.id,
+        quantity: item.quantity,
+        unit_price: item.product.price
+      }));
+
+      // Determine payment parameters based on payment type
+      let rpcParams: any = {
+        p_payment_type: saleData.paymentType,
+        p_seller_name: saleData.sellerName,
+        p_items: JSON.stringify(items),
+        p_customer_id: saleData.customer?.id || null,
+        p_notes: saleData.notes || null,
+        p_payment_method_type: saleData.paymentMethodType,
+        p_payment_method: saleData.paymentMethod,
+        p_reference_code: saleData.referenceCode || null,
+      };
+
+      // Add installment-specific parameters
+      if (saleData.paymentType === 'Down Payment + Installments') {
+        rpcParams.p_down_payment = saleData.downPaymentAmount;
+        
+        // Get installment plan details
+        const plan = installmentPlans.find(p => p.id === saleData.installmentPlanId);
+        if (plan) {
+          rpcParams.p_interest_rate = plan.interest_rate;
+          rpcParams.p_frequency_unit = plan.frequency_unit;
+          rpcParams.p_frequency_interval = plan.frequency_interval;
+          rpcParams.p_number_of_installments = plan.num_installments;
+          rpcParams.p_start_date_time = new Date().toISOString();
+        }
+      } else if (saleData.paymentType === 'Installment Only') {
+        const plan = installmentPlans.find(p => p.id === saleData.installmentPlanId);
+        if (plan) {
+          rpcParams.p_interest_rate = plan.interest_rate;
+          rpcParams.p_frequency_unit = plan.frequency_unit;
+          rpcParams.p_frequency_interval = plan.frequency_interval;
+          rpcParams.p_number_of_installments = plan.num_installments;
+          rpcParams.p_start_date_time = new Date().toISOString();
+        }
+      } else if (saleData.paymentType === 'Custom Installment') {
+        rpcParams.p_down_payment = saleData.customDownPaymentAmount || 0;
+        rpcParams.p_interest_rate = (saleData.customInterestRate || 0) / 100;
+        rpcParams.p_frequency_unit = saleData.customFrequencyUnit;
+        rpcParams.p_frequency_interval = saleData.customFrequencyInterval;
+        rpcParams.p_number_of_installments = saleData.customNumInstallments;
+        rpcParams.p_start_date_time = saleData.customStartDate ? new Date(saleData.customStartDate).toISOString() : new Date().toISOString();
+      }
+
+      // Call the process_sale RPC function
+      const { data, error } = await supabase.rpc('process_sale', rpcParams);
+
+      if (error) throw error;
+
+      const result: RpcResult = data[0];
+      if (!result.success) {
+        throw new Error(result.message);
+      }
+
+      // Success! Reset form and navigate
+      setSaleData({
+        customer: null,
+        cart: [],
+        sellerName: persona?.name || '',
+        notes: '',
+        paymentType: 'Full Payment',
+        downPaymentAmount: 0,
+        installmentPlanId: '',
+        customDownPaymentAmount: 0,
+        paymentMethodType: 'Cash',
+        paymentMethod: 'Exact Cash',
+        referenceCode: '',
+        totalAmount: 0,
+      });
+      setCurrentStep(1);
+      
+      // Navigate to dashboard with success message
+      navigate('/dashboard', { 
+        state: { 
+          message: 'Sale completed successfully!',
+          type: 'success'
+        }
+      });
+      
+    } catch (err) {
+      console.error('Sale completion error:', err);
+      alert(err instanceof Error ? err.message : 'Failed to complete sale. Please try again.');
+    } finally {
+      setIsCompletingSale(false);
+    }
+  };
+
+  // Mock installment plans for parameter mapping
+  const installmentPlans = [
+    {
+      id: '1',
+      name: '3 Months Plan',
+      num_installments: 3,
+      frequency_unit: 'month',
+      frequency_interval: 1,
+      interest_rate: 0.05,
+    },
+    {
+      id: '2',
+      name: '6 Months Plan',
+      num_installments: 6,
+      frequency_unit: 'month',
+      frequency_interval: 1,
+      interest_rate: 0.08,
+    },
+    {
+      id: '3',
+      name: '12 Months Plan',
+      num_installments: 12,
+      frequency_unit: 'month',
+      frequency_interval: 1,
+      interest_rate: 0.12,
+    },
+  ];
 
   const canProceed = () => {
     switch (currentStep) {
@@ -115,11 +254,8 @@ const NewSale: React.FC = () => {
         return (
           <ConfirmationStep
             saleData={saleData}
-            onComplete={() => {
-              // Handle sale completion
-              console.log('Sale completed:', saleData);
-              // Reset form or redirect
-            }}
+            onCompleteSale={handleCompleteSale}
+            isCompletingSale={isCompletingSale}
           />
         );
       default:
