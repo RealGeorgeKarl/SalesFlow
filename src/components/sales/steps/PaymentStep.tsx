@@ -20,6 +20,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
   // Custom installment state
   const [customInterestRate, setCustomInterestRate] = useState(0);
   const [customNumInstallments, setCustomNumInstallments] = useState(3);
+  const [customDownPaymentAmount, setCustomDownPaymentAmount] = useState(0);
   const [customFrequencyUnit, setCustomFrequencyUnit] = useState<FrequencyUnit>('month');
   const [customFrequencyInterval, setCustomFrequencyInterval] = useState(1);
   const [customStartDate, setCustomStartDate] = useState('');
@@ -68,7 +69,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
     if (saleData.paymentType !== 'Full Payment') {
       calculatePaymentSchedule();
     }
-  }, [saleData.paymentType, saleData.installmentPlanId, saleData.downPaymentAmount, saleData.totalAmount, customInterestRate, customNumInstallments, customFrequencyUnit, customFrequencyInterval, customStartDate]);
+  }, [saleData.paymentType, saleData.installmentPlanId, saleData.downPaymentAmount, saleData.totalAmount, customInterestRate, customNumInstallments, customDownPaymentAmount, customFrequencyUnit, customFrequencyInterval, customStartDate]);
 
   const calculatePaymentSchedule = () => {
     let plan: InstallmentPlan | null = null;
@@ -80,6 +81,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
     if (saleData.paymentType === 'Custom Installment') {
       numInstallments = customNumInstallments;
       interestRate = customInterestRate / 100; // Convert percentage to decimal
+      
       
       // Calculate interval days based on frequency
       const frequencyMultiplier = customFrequencyInterval || 1;
@@ -112,7 +114,13 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
     }
 
     const totalAmount = saleData.totalAmount;
-    const downPayment = saleData.paymentType === 'Down Payment + Installments' ? saleData.downPaymentAmount : 0;
+    let downPayment = 0;
+    if (saleData.paymentType === 'Down Payment + Installments') {
+      downPayment = saleData.downPaymentAmount;
+    } else if (saleData.paymentType === 'Custom Installment') {
+      downPayment = customDownPaymentAmount;
+    }
+    
     const principalAmount = totalAmount - downPayment;
     const interestAmount = principalAmount * interestRate;
     const totalWithInterest = principalAmount + interestAmount;
@@ -138,6 +146,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
       paymentType: type,
       downPaymentAmount: 0,
       installmentPlanId: '',
+      customDownPaymentAmount: undefined,
       customInterestRate: undefined,
       customFrequencyUnit: undefined,
       customFrequencyInterval: undefined,
@@ -149,6 +158,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
     // Reset custom values
     setCustomInterestRate(0);
     setCustomNumInstallments(3);
+    setCustomDownPaymentAmount(0);
     setCustomFrequencyUnit('month');
     setCustomFrequencyInterval(1);
     setCustomStartDate('');
@@ -167,6 +177,10 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
       case 'interestRate':
         setCustomInterestRate(value);
         onUpdate({ customInterestRate: value });
+        break;
+      case 'downPaymentAmount':
+        setCustomDownPaymentAmount(value);
+        onUpdate({ customDownPaymentAmount: value });
         break;
       case 'numInstallments':
         setCustomNumInstallments(value);
@@ -198,9 +212,16 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
       interestRate = plan.interest_rate;
     }
 
-    const principalAmount = saleData.totalAmount - (saleData.paymentType === 'Down Payment + Installments' ? saleData.downPaymentAmount : 0);
+    let downPayment = 0;
+    if (saleData.paymentType === 'Down Payment + Installments') {
+      downPayment = saleData.downPaymentAmount;
+    } else if (saleData.paymentType === 'Custom Installment') {
+      downPayment = customDownPaymentAmount;
+    }
+    
+    const principalAmount = saleData.totalAmount - downPayment;
     const interestAmount = principalAmount * interestRate;
-    return principalAmount + interestAmount + (saleData.paymentType === 'Down Payment + Installments' ? saleData.downPaymentAmount : 0);
+    return principalAmount + interestAmount + downPayment;
   };
 
   return (
@@ -312,6 +333,29 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
           <div className="mb-6 bg-gray-50 rounded-lg p-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">Custom Installment Terms</h3>
             
+            {/* Down Payment Option */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Down Payment (Optional)
+              </label>
+              <div className="relative">
+                <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="number"
+                  value={customDownPaymentAmount}
+                  onChange={(e) => handleCustomValueChange('downPaymentAmount', parseFloat(e.target.value) || 0)}
+                  className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="0.00"
+                  min="0"
+                  max={saleData.totalAmount}
+                  step="0.01"
+                />
+              </div>
+              <p className="text-sm text-gray-500 mt-1">
+                Maximum: ${saleData.totalAmount.toFixed(2)}
+              </p>
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -421,11 +465,14 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
                     ${saleData.totalAmount.toFixed(2)}
                   </p>
                 </div>
-                {saleData.paymentType === 'Down Payment + Installments' && (
+                {(saleData.paymentType === 'Down Payment + Installments' || 
+                  (saleData.paymentType === 'Custom Installment' && customDownPaymentAmount > 0)) && (
                   <div className="text-center">
                     <p className="text-sm text-gray-500">Down Payment</p>
                     <p className="text-lg font-semibold text-green-600">
-                      ${saleData.downPaymentAmount.toFixed(2)}
+                      ${(saleData.paymentType === 'Down Payment + Installments' 
+                        ? saleData.downPaymentAmount 
+                        : customDownPaymentAmount).toFixed(2)}
                     </p>
                   </div>
                 )}

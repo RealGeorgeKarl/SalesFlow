@@ -14,6 +14,7 @@ export interface NewSaleData {
   paymentType: 'Full Payment' | 'Down Payment + Installments' | 'Installment Only' | 'Custom Installment';
   downPaymentAmount: number;
   installmentPlanId: string;
+  customDownPaymentAmount?: number;
   customInterestRate?: number;
   customFrequencyUnit?: FrequencyUnit;
   customFrequencyInterval?: number;
@@ -32,6 +33,7 @@ const NewSale: React.FC = () => {
     paymentType: 'Full Payment',
     downPaymentAmount: 0,
     installmentPlanId: '',
+    customDownPaymentAmount: 0,
     totalAmount: 0,
   });
 
