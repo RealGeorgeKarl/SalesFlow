@@ -6,20 +6,16 @@ const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, isLoading, retryDelay } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true);
 
     try {
       await login(email, password);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -70,16 +66,23 @@ const LoginForm: React.FC = () => {
           {error && (
             <div className="flex items-center space-x-2 p-3 bg-red-50 border border-red-200 rounded-lg">
               <AlertCircle className="h-5 w-5 text-red-600" />
-              <span className="text-sm text-red-700">{error}</span>
+              <div className="flex-1">
+                <span className="text-sm text-red-700">{error}</span>
+                {retryDelay > 0 && (
+                  <div className="text-xs text-red-600 mt-1">
+                    Please wait {retryDelay} second{retryDelay !== 1 ? 's' : ''} before trying again
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || retryDelay > 0}
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {isLoading ? 'Signing In...' : 'Sign In'}
+            {retryDelay > 0 ? `Please wait (${retryDelay}s)` : isLoading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
       </div>

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { supabase } from '../lib/supabase';
 import { User, Persona, AuthState } from '../types';
 
@@ -29,7 +29,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     persona: null,
     isAuthenticated: false,
     isLoading: true,
+    retryDelay: 0,
   });
+
+  const retryIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Clear interval on unmount
+  useEffect(() => {
+    return () => {
+      if (retryIntervalRef.current) {
+        clearInterval(retryIntervalRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     // Listen for Supabase auth state changes
@@ -52,6 +64,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             persona,
             isAuthenticated: !!persona, // isAuthenticated depends on both user and selected persona
             isLoading: false,
+            retryDelay: 0,
           });
           
           localStorage.setItem('salesflow_user', JSON.stringify(user));
@@ -61,6 +74,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             persona: null,
             isAuthenticated: false,
             isLoading: false,
+            retryDelay: 0,
           });
           localStorage.removeItem('salesflow_user');
           localStorage.removeItem('salesflow_persona');
@@ -72,7 +86,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const checkInitialSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        setAuthState(prev => ({ ...prev, isLoading: false }));
+        setAuthState(prev => ({ ...prev, isLoading: false, retryDelay: 0 }));
       }
     };
     
@@ -82,7 +96,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    setAuthState(prev => ({ ...prev, isLoading: true }));
+    // Clear any existing retry interval
+    if (retryIntervalRef.current) {
+      clearInterval(retryIntervalRef.current);
+    }
+    
+    setAuthState(prev => ({ ...prev, isLoading: true, retryDelay: 0 }));
     
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -96,13 +115,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       // The auth state will be updated by the onAuthStateChange listener
     } catch (error) {
-      setAuthState(prev => ({ ...prev, isLoading: false }));
+      // Clear any existing retry interval
+      if (retryIntervalRef.current) {
+        clearInterval(retryIntervalRef.current);
+      }
+      
+      // Start 15-second retry delay
+      setAuthState(prev => ({ ...prev, isLoading: true, retryDelay: 15 }));
+      
+      retryIntervalRef.current = setInterval(() => {
+        setAuthState(prev => {
+          const newDelay = prev.retryDelay - 1;
+          if (newDelay <= 0) {
+            if (retryIntervalRef.current) {
+              clearInterval(retryIntervalRef.current);
+              retryIntervalRef.current = null;
+            }
+            return { ...prev, isLoading: false, retryDelay: 0 };
+          }
+          return { ...prev, retryDelay: newDelay };
+        });
+      }, 1000);
+      
       throw new Error(error instanceof Error ? error.message : 'Login failed');
     }
   };
 
   const selectPersona = async (persona: Persona, password: string) => {
-    setAuthState(prev => ({ ...prev, isLoading: true }));
+    // Clear any existing retry interval
+    if (retryIntervalRef.current) {
+      clearInterval(retryIntervalRef.current);
+    }
+    
+    setAuthState(prev => ({ ...prev, isLoading: true, retryDelay: 0 }));
     
     try {
       let validationResult;
@@ -135,11 +180,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         persona,
         isAuthenticated: true,
         isLoading: false,
+        retryDelay: 0,
       }));
       
       localStorage.setItem('salesflow_persona', JSON.stringify(persona));
     } catch (error) {
-      setAuthState(prev => ({ ...prev, isLoading: false }));
+      // Clear any existing retry interval
+      if (retryIntervalRef.current) {
+        clearInterval(retryIntervalRef.current);
+      }
+      
+      // Start 15-second retry delay
+      setAuthState(prev => ({ ...prev, isLoading: true, retryDelay: 15 }));
+      
+      retryIntervalRef.current = setInterval(() => {
+        setAuthState(prev => {
+          const newDelay = prev.retryDelay - 1;
+          if (newDelay <= 0) {
+            if (retryIntervalRef.current) {
+              clearInterval(retryIntervalRef.current);
+              retryIntervalRef.current = null;
+            }
+            return { ...prev, isLoading: false, retryDelay: 0 };
+          }
+          return { ...prev, retryDelay: newDelay };
+        });
+      }, 1000);
+      
       throw error;
     }
   };
@@ -156,6 +223,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         persona: null,
         isAuthenticated: false,
         isLoading: false,
+        retryDelay: 0,
       });
       localStorage.removeItem('salesflow_user');
       localStorage.removeItem('salesflow_persona');
@@ -167,6 +235,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       ...prev,
       persona: null,
       isAuthenticated: false,
+      retryDelay: 0,
     }));
     localStorage.removeItem('salesflow_persona');
   };

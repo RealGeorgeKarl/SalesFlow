@@ -9,8 +9,7 @@ const PersonaSelection: React.FC = () => {
   const [salespersonName, setSalespersonName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const { selectPersona, logout } = useAuth();
+  const { selectPersona, logout, isLoading, retryDelay } = useAuth();
   const { availablePersonas } = usePersona();
 
   const handlePersonaTypeSelect = (type: 'Admin' | 'Salesperson') => {
@@ -25,7 +24,6 @@ const PersonaSelection: React.FC = () => {
     if (!selectedPersonaType) return;
 
     setError('');
-    setIsLoading(true);
 
     try {
       // Construct the persona object based on selected type
@@ -37,8 +35,6 @@ const PersonaSelection: React.FC = () => {
       await selectPersona(persona, password);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Authentication failed');
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -144,16 +140,25 @@ const PersonaSelection: React.FC = () => {
               {error && (
                 <div className="flex items-center space-x-2 p-3 bg-red-50 border border-red-200 rounded-lg">
                   <AlertCircle className="h-5 w-5 text-red-600" />
-                  <span className="text-sm text-red-700">{error}</span>
+                  <div className="flex-1">
+                    <span className="text-sm text-red-700">{error}</span>
+                    {retryDelay > 0 && (
+                      <div className="text-xs text-red-600 mt-1">
+                        Please wait {retryDelay} second{retryDelay !== 1 ? 's' : ''} before trying again
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 
               <button
                 type="submit"
-                disabled={!canSubmit() || isLoading}
+                disabled={!canSubmit() || isLoading || retryDelay > 0}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {isLoading ? (
+                {retryDelay > 0 ? (
+                  `Please wait (${retryDelay}s)`
+                ) : isLoading ? (
                   <div className="flex items-center space-x-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
                     <span>Authenticating...</span>

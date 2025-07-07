@@ -124,6 +124,7 @@ export interface AuthState {
   persona: Persona | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  retryDelay: number;
 }
 
 export interface CartItem {
