@@ -29,11 +29,12 @@ export const useSaleData = (): UseSaleDataReturn => {
     try {
       const { data, error } = await supabase.rpc('get_user_data');
         console.log(data.customers);
+                console.log(data.products);
+      
 
       if (error) throw error;
 
       if (data && data.length > 0) {
-                console.log(data.products);
 
         
         // Format customers
