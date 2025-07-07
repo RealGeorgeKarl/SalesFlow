@@ -8,6 +8,7 @@ import CustomerStep from './steps/CustomerStep';
 import ProductStep from './steps/ProductStep';
 import PaymentStep from './steps/PaymentStep';
 import ConfirmationStep from './steps/ConfirmationStep';
+import SaleResultDialog from './modals/SaleResultDialog';
 import { Customer, CartItem, Sale, PaymentSchedule, FrequencyUnit, PaymentMethodType, PaymentMethod, RpcResult } from '../../types';
 
 export interface NewSaleData {
@@ -36,6 +37,12 @@ const NewSale: React.FC = () => {
   const { customers, products, isLoading, error, addCustomer } = useSaleData();
   const [currentStep, setCurrentStep] = useState(1);
   const [isCompletingSale, setIsCompletingSale] = useState(false);
+  
+  // Result dialog state
+  const [showResultDialog, setShowResultDialog] = useState(false);
+  const [resultMessage, setResultMessage] = useState('');
+  const [resultType, setResultType] = useState<'success' | 'error'>('success');
+  
   const [saleData, setSaleData] = useState<NewSaleData>({
     customer: null,
     cart: [],
@@ -83,6 +90,9 @@ const NewSale: React.FC = () => {
 
   const handleCompleteSale = async () => {
     setIsCompletingSale(true);
+    setShowResultDialog(true);
+    setResultMessage('Processing your sale...');
+    setResultType('success');
     
     try {
       // Prepare items for the RPC call
@@ -145,7 +155,7 @@ const NewSale: React.FC = () => {
         throw new Error(result.message);
       }
 
-      // Success! Reset form and navigate
+      // Success! Reset form
       setSaleData({
         customer: null,
         cart: [],
@@ -162,19 +172,25 @@ const NewSale: React.FC = () => {
       });
       setCurrentStep(1);
       
-      // Navigate to dashboard with success message
-      navigate('/dashboard', { 
-        state: { 
-          message: 'Sale completed successfully!',
-          type: 'success'
-        }
-      });
+      // Show success message
+      setResultMessage('Sale completed successfully! You will be redirected to the dashboard.');
+      setResultType('success');
       
     } catch (err) {
       console.error('Sale completion error:', err);
-      alert(err instanceof Error ? err.message : 'Failed to complete sale. Please try again.');
+      setResultMessage(err instanceof Error ? err.message : 'Failed to complete sale. Please try again.');
+      setResultType('error');
     } finally {
       setIsCompletingSale(false);
+    }
+  };
+
+  const handleCloseResultDialog = () => {
+    setShowResultDialog(false);
+    
+    // If it was a successful sale, navigate to dashboard
+    if (resultType === 'success' && !isCompletingSale) {
+      navigate('/dashboard');
     }
   };
 
@@ -361,6 +377,15 @@ const NewSale: React.FC = () => {
           {currentStep < steps.length && <ChevronRight className="h-4 w-4 ml-2" />}
         </button>
       </div>
+
+      {/* Result Dialog */}
+      <SaleResultDialog
+        isOpen={showResultDialog}
+        onClose={handleCloseResultDialog}
+        message={resultMessage}
+        type={resultType}
+        isLoading={isCompletingSale}
+      />
     </div>
   );
 };
