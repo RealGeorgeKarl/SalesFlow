@@ -37,6 +37,8 @@ export const useSaleData = (): UseSaleDataReturn => {
         
         // Format customers
         const formattedCustomers: Customer[] = data.customers
+                console.log(formattedCustomers);
+
 
         // Format products
         const formattedProducts: Product[] = data.products.map((product: any) => ({
