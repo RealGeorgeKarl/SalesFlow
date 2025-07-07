@@ -34,7 +34,7 @@ export const useSaleData = (): UseSaleDataReturn => {
 
       if (error) throw error;
 
-      if (data && data.length > 0) {
+      if (data) {
 
         
         // Format customers
