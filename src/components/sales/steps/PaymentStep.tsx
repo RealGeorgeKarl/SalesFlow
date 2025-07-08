@@ -246,27 +246,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
       <div>
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Payment Terms</h2>
 
-        {/* Start Date for Installment Plans */}
-        {saleData.paymentType !== 'Full Payment' && (
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Start Date
-            </label>
-            <div className="relative">
-              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="date"
-                value={saleData.customStartDate || ''}
-                onChange={(e) => onUpdate({ customStartDate: e.target.value })}
-                className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                min={new Date().toISOString().split('T')[0]}
-              />
-            </div>
-            <p className="text-sm text-gray-500 mt-1">
-              When should the {saleData.paymentType === 'Full Payment' ? 'payment' : 'installments'} start?
-            </p>
-          </div>
-        )}
+        
         
         {/* Notes */}
         <div className="mb-6">
@@ -366,6 +346,28 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
             ))}
           </div>
         </div>
+
+        {/* Start Date for Installment Plans */}
+        {saleData.paymentType !== 'Full Payment' && (
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Start Date
+            </label>
+            <div className="relative">
+              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
+                type="date"
+                value={saleData.customStartDate || ''}
+                onChange={(e) => onUpdate({ customStartDate: e.target.value })}
+                className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                min={new Date().toISOString().split('T')[0]}
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">
+              When should the {saleData.paymentType === 'Full Payment' ? 'payment' : 'installments'} start?
+            </p>
+          </div>
+        )}
 
         {/* Down Payment Amount */}
         {saleData.paymentType === 'Down Payment + Installments' && (
