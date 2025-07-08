@@ -9,7 +9,7 @@ interface ConfirmationStepProps {
   isCompletingSale: boolean;
 }
 
-const ConfirmationStep = React.forwardRef<HTMLDivElement, ConfirmationStepProps>(({ saleData, onCompleteSale, isCompletingSale }, ref) => {
+const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ saleData, onCompleteSale, isCompletingSale }) => {
   const { persona } = useAuth();
   
   const handleComplete = async () => {
@@ -17,7 +17,7 @@ const ConfirmationStep = React.forwardRef<HTMLDivElement, ConfirmationStepProps>
   };
 
   return (
-    <div ref={ref} className="space-y-6">
+    <div className="space-y-6">
       <div className="text-center">
         <div className="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
           <CheckCircle className="h-8 w-8 text-green-600" />
@@ -186,8 +186,6 @@ const ConfirmationStep = React.forwardRef<HTMLDivElement, ConfirmationStepProps>
       </div>
     </div>
   );
-});
-
-ConfirmationStep.displayName = 'ConfirmationStep';
+};
 
 export default ConfirmationStep;

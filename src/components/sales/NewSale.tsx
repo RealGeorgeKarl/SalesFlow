@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, User, ShoppingCart, CreditCard, FileText } from 'lucide-react';
-import html2canvas from 'html2canvas';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { useSaleData } from '../../hooks/useSaleData';
@@ -41,10 +40,7 @@ const NewSale: React.FC = () => {
   const [showResultDialog, setShowResultDialog] = useState(false);
   const [resultMessage, setResultMessage] = useState('');
   const [resultType, setResultType] = useState<'success' | 'error'>('success');
-  
-  // Ref for the confirmation step to capture for image generation
-  const confirmationStepRef = React.useRef<HTMLDivElement>(null);
-  
+
   const [saleData, setSaleData] = useState<NewSaleData>({
     customer: null,
     cart: [],
@@ -115,7 +111,6 @@ const NewSale: React.FC = () => {
         p_payment_method: saleData.paymentMethod,
         p_reference_code: saleData.referenceCode || null,
       };
-      console.log(saleData);
 
       // Add installment-specific parameters
       if (saleData.paymentType === 'Custom Installment') {
@@ -181,69 +176,6 @@ const NewSale: React.FC = () => {
       setResultType('error');
     } finally {
       setIsCompletingSale(false);
-    }
-  };
-
-  const handlePrintReceipt = () => {
-    window.print();
-  };
-
-  const handleGenerateImage = async () => {
-    if (!confirmationStepRef.current) {
-      alert('Unable to generate image. Please try again.');
-      return;
-    }
-
-    try {
-      // Create a temporary container with the receipt content
-      const tempContainer = document.createElement('div');
-      tempContainer.style.position = 'absolute';
-      tempContainer.style.left = '-9999px';
-      tempContainer.style.top = '0';
-      tempContainer.style.width = '800px';
-      tempContainer.style.backgroundColor = 'white';
-      tempContainer.style.padding = '20px';
-      tempContainer.style.fontFamily = 'Arial, sans-serif';
-      
-      // Clone the confirmation step content
-      const clonedContent = confirmationStepRef.current.cloneNode(true) as HTMLElement;
-      
-      // Remove action buttons from the cloned content
-      const actionButtons = clonedContent.querySelector('.flex.justify-center.space-x-4.pt-6');
-      if (actionButtons) {
-        actionButtons.remove();
-      }
-      
-      tempContainer.appendChild(clonedContent);
-      document.body.appendChild(tempContainer);
-
-      // Generate the image
-      const canvas = await html2canvas(tempContainer, {
-        backgroundColor: '#ffffff',
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-      });
-
-      // Remove the temporary container
-      document.body.removeChild(tempContainer);
-
-      // Convert to blob and download
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = `receipt-${new Date().toISOString().split('T')[0]}-${Date.now()}.png`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(url);
-        }
-      }, 'image/png');
-    } catch (error) {
-      console.error('Error generating image:', error);
-      alert('Failed to generate image. Please try again.');
     }
   };
 
@@ -331,7 +263,6 @@ const NewSale: React.FC = () => {
       case 4:
         return (
           <ConfirmationStep
-            ref={confirmationStepRef}
             saleData={saleData}
             onCompleteSale={handleCompleteSale}
             isCompletingSale={isCompletingSale}
@@ -444,13 +375,12 @@ const NewSale: React.FC = () => {
       {/* Result Dialog */}
       <SaleResultDialog
         isOpen={showResultDialog}
-        onClose={resultType === 'error' ? handleCloseResultDialog : undefined}
+        onClose={resultType === 'error' ? handleCloseResultDialog : handleCloseResultDialog}
         onDone={resultType === 'success' ? handleDone : undefined}
-        onPrintReceipt={resultType === 'success' ? handlePrintReceipt : undefined}
-        onGenerateImage={resultType === 'success' ? handleGenerateImage : undefined}
         message={resultMessage}
         type={resultType}
         isLoading={isCompletingSale}
+        saleData={resultType === 'success' ? saleData : undefined}
       />
     </div>
   );
