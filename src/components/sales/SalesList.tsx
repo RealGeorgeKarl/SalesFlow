@@ -67,9 +67,7 @@ const SalesList: React.FC = () => {
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <div>
-          
-        </div>
+        
         <Link
           to="/new-sale"
           className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
