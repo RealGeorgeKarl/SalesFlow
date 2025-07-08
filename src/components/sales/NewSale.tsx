@@ -40,6 +40,7 @@ const NewSale: React.FC = () => {
   const [showResultDialog, setShowResultDialog] = useState(false);
   const [resultMessage, setResultMessage] = useState('');
   const [resultType, setResultType] = useState<'success' | 'error'>('success');
+  const [currentCompletedSaleData, setCurrentCompletedSaleData] = useState<NewSaleData | undefined>(undefined);
 
   const [saleData, setSaleData] = useState<NewSaleData>({
     customer: null,
@@ -150,6 +151,9 @@ const NewSale: React.FC = () => {
         throw new Error(result.message);
       }
 
+      // Store the completed sale data before resetting
+      setCurrentCompletedSaleData({ ...saleData });
+
       // Success! Reset form
       setSaleData({
         customer: null,
@@ -181,11 +185,15 @@ const NewSale: React.FC = () => {
 
   const handleDone = () => {
     setShowResultDialog(false);
+    setCurrentCompletedSaleData(undefined);
     navigate('/dashboard');
   };
 
   const handleCloseResultDialog = () => {
     setShowResultDialog(false);
+    if (resultType === 'error') {
+      setCurrentCompletedSaleData(undefined);
+    }
   };
 
   // Mock installment plans for parameter mapping
@@ -380,7 +388,7 @@ const NewSale: React.FC = () => {
         message={resultMessage}
         type={resultType}
         isLoading={isCompletingSale}
-        saleData={resultType === 'success' ? saleData : undefined}
+        saleData={resultType === 'success' ? currentCompletedSaleData : undefined}
       />
     </div>
   );
