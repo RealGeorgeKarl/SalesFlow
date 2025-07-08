@@ -65,6 +65,43 @@ const SalesList: React.FC = () => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <DollarSign className="h-8 w-8 text-green-600" />
+            <div className="ml-4">
+              <p className="text-sm text-gray-600">Total Sales</p>
+              <p className="text-2xl font-semibold text-gray-900">
+                ${sales.reduce((sum, sale) => sum + sale.total_amount, 0).toFixed(2)}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <Calendar className="h-8 w-8 text-blue-600" />
+            <div className="ml-4">
+              <p className="text-sm text-gray-600">In Progress Sales</p>
+              <p className="text-2xl font-semibold text-gray-900">
+                {sales.filter(sale => sale.status === 'In Progress').length}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <Filter className="h-8 w-8 text-yellow-600" />
+            <div className="ml-4">
+              <p className="text-sm text-gray-600">Pending Balance</p>
+              <p className="text-2xl font-semibold text-gray-900">
+                ${sales.reduce((sum, sale) => sum + sale.remaining_balance, 0).toFixed(2)}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
@@ -224,43 +261,6 @@ const SalesList: React.FC = () => {
               ))}
             </tbody>
           </table>
-        </div>
-      </div>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center">
-            <DollarSign className="h-8 w-8 text-green-600" />
-            <div className="ml-4">
-              <p className="text-sm text-gray-600">Total Sales</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                ${sales.reduce((sum, sale) => sum + sale.total_amount, 0).toFixed(2)}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center">
-            <Calendar className="h-8 w-8 text-blue-600" />
-            <div className="ml-4">
-              <p className="text-sm text-gray-600">In Progress Sales</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {sales.filter(sale => sale.status === 'In Progress').length}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center">
-            <Filter className="h-8 w-8 text-yellow-600" />
-            <div className="ml-4">
-              <p className="text-sm text-gray-600">Pending Balance</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                ${sales.reduce((sum, sale) => sum + sale.remaining_balance, 0).toFixed(2)}
-              </p>
-            </div>
-          </div>
         </div>
       </div>
 
