@@ -26,24 +26,7 @@ export const useSales = (): UseSalesReturn => {
       if (error) throw error;
 
       console.log('first', data[0]);
-      let salesData: any[] = []; // Initialize as empty array of any type
-      if (Array.isArray(data) && data.length > 0) {
-        const rpcResult = data;
-        if (rpcResult) {
-          // Ensure get_sales_details_by_user is an array before assigning
-                      salesData = rpcResult;
-
-          if (Array.isArray(rpcResult.get_sales_details_by_user)) {
-            salesData = rpcResult;
-          } else {
-            console.warn('get_sales_details_by_user is not an array:', rpcResult.get_sales_details_by_user);
-          }
-        } else {
-          console.warn('RPC result does not contain get_sales_details_by_user or is not an object:', rpcResult);
-        }
-      } else {
-        console.warn('Raw data from RPC is not an array or is empty:', data);
-      }
+      let salesData: any[] = data; // Initialize as empty array of any type
 
       console.log('salesData after extraction:', salesData);
 
