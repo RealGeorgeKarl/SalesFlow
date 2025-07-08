@@ -137,11 +137,6 @@ const NewSale: React.FC = () => {
           rpcParams.p_start_date_time = new Date().toISOString();
         }
       } else if (saleData.paymentType === 'Custom Installment') {
-        if (saleData.customDownPayment > 0) {
-          rpcParams.p_payment_type = 'Down Payment'
-        }
-        rpcParams.p_payment_type = 'Installment Only'
-
         rpcParams.p_down_payment = saleData.customDownPaymentAmount || 0;
         rpcParams.p_interest_rate = (saleData.customInterestRate || 0) / 100;
         rpcParams.p_frequency_unit = saleData.customFrequencyUnit;
@@ -161,7 +156,12 @@ const NewSale: React.FC = () => {
         if (data.length === 0) throw new Error('No data returned from sale processing');
         result = data[0];
       } else {
-        result = data;
+        // If data is not an array, it might be a scalar or object
+        if (typeof data === 'object' && data !== null) {
+          result = data as RpcResult;
+        } else {
+          throw new Error('Invalid response format from sale processing');
+        }
       }
       
       if (!result.success) {
