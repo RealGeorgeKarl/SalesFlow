@@ -118,7 +118,7 @@ const NewSale: React.FC = () => {
       // Add installment-specific parameters
       if (saleData.paymentType === 'Down Payment + Installments') {
         rpcParams.p_down_payment = saleData.downPaymentAmount;
-        rpcParams.p_payment_type = 'Down Payment',
+        rpcParams.p_payment_type = 'Down Payment';
 
         // Get installment plan details
         const plan = installmentPlans.find(p => p.id === saleData.installmentPlanId);
