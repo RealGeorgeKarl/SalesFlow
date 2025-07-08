@@ -111,6 +111,7 @@ const NewSale: React.FC = () => {
         p_payment_method: saleData.paymentMethod,
         p_reference_code: saleData.referenceCode || null,
       };
+      console.log(saleData);
 
       // Add installment-specific parameters
       if (saleData.paymentType === 'Custom Installment') {
