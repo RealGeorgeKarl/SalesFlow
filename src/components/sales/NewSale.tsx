@@ -118,7 +118,8 @@ const NewSale: React.FC = () => {
       // Add installment-specific parameters
       if (saleData.paymentType === 'Down Payment + Installments') {
         rpcParams.p_down_payment = saleData.downPaymentAmount;
-        
+        rpcParams.p_payment_type = 'Down Payment',
+
         // Get installment plan details
         const plan = installmentPlans.find(p => p.id === saleData.installmentPlanId);
         if (plan) {
@@ -138,6 +139,11 @@ const NewSale: React.FC = () => {
           rpcParams.p_start_date_time = new Date().toISOString();
         }
       } else if (saleData.paymentType === 'Custom Installment') {
+        rpcParams.p_payment_type = if (saleData.customDownPaymentAmount > 0) {
+          'Down Payment'
+        } else {
+        'Installment Only'
+        }
         rpcParams.p_down_payment = saleData.customDownPaymentAmount || 0;
         rpcParams.p_interest_rate = (saleData.customInterestRate || 0) / 100;
         rpcParams.p_frequency_unit = saleData.customFrequencyUnit;
