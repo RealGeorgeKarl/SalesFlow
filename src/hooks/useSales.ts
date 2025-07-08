@@ -20,7 +20,7 @@ export const useSales = (): UseSalesReturn => {
 
     try {
       const { data, error } = await supabase.rpc('get_sales_details_by_user');
-
+      console.log(data);
       if (error) throw error;
 
       // The RPC function returns an array with a single object containing the sales array
