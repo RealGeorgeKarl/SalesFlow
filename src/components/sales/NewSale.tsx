@@ -93,7 +93,8 @@ const NewSale: React.FC = () => {
     setShowResultDialog(true);
     setResultMessage('Processing your sale...');
     setResultType('success');
-    
+
+    console.log(saleData);
     try {
       // Prepare items for the RPC call
       const items = saleData.cart.map(item => ({
