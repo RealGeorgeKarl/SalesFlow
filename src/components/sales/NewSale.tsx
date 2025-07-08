@@ -149,6 +149,7 @@ const NewSale: React.FC = () => {
       // Call the process_sale RPC function
       const { data, error } = await supabase.rpc('process_sale', rpcParams);
 
+      console.log(data);
       if (error) throw error;
 
       // Handle both array and scalar responses from RPC
