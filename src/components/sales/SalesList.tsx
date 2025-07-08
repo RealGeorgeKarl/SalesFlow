@@ -67,10 +67,8 @@ const SalesList: React.FC = () => {
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Sales Management</h1>
-          <p className="text-gray-600 mt-1">Manage all sales and payment tracking</p>
-        </div>
+        
+        
         <Link
           to="/new-sale"
           className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
