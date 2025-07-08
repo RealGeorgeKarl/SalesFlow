@@ -245,7 +245,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
               <input
                 type="date"
                 value={saleData.customStartDate || ''}
-                onChange={(e) => onUpdate({ customStartDate: e.target.value })}
+                onChange={(e) => onUpdate({ saleData.customStartDate: e.target.value })}
                 className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 min={new Date().toISOString().split('T')[0]}
               />
