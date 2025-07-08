@@ -67,16 +67,7 @@ const SalesList: React.FC = () => {
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        
-        <Link
-          to="/new-sale"
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
-          <Plus className="h-5 w-5 mr-2" />
-          New Sale
-        </Link>
-      </div>
-      {/* Summary Cards */}
+        {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
@@ -112,6 +103,15 @@ const SalesList: React.FC = () => {
           </div>
         </div>
       </div>
+        <Link
+          to="/new-sale"
+          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          <Plus className="h-5 w-5 mr-2" />
+          New Sale
+        </Link>
+      </div>
+      
 
       {/* Error Display */}
       {error && (
