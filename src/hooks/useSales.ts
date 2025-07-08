@@ -31,6 +31,8 @@ export const useSales = (): UseSalesReturn => {
         const rpcResult = data;
         if (rpcResult) {
           // Ensure get_sales_details_by_user is an array before assigning
+                      salesData = rpcResult;
+
           if (Array.isArray(rpcResult.get_sales_details_by_user)) {
             salesData = rpcResult;
           } else {
