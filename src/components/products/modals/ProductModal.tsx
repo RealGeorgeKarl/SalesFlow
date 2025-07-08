@@ -141,13 +141,12 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSubmit, 
               <div className="relative">
                 <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
-                  type="number"
+                  type="text"
                   value={formData.price}
                   onChange={(e) => updateFormData('price', parseFloat(e.target.value) || 0)}
+                  onWheel={(e) => e.currentTarget.blur()}
                   className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="0.00"
-                  min="0"
-                  step="0.01"
                   required
                   disabled={isLoading}
                 />
@@ -161,12 +160,12 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSubmit, 
               <div className="relative">
                 <Hash className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
-                  type="number"
+                  type="text"
                   value={formData.quantity}
                   onChange={(e) => updateFormData('quantity', parseInt(e.target.value) || 0)}
+                  onWheel={(e) => e.currentTarget.blur()}
                   className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="0"
-                  min="0"
                   required
                   disabled={isLoading}
                 />
