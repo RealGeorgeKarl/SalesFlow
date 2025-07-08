@@ -245,7 +245,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Payment Terms</h2>
-        
+
         {/* Start Date for Installment Plans */}
         {saleData.paymentType !== 'Full Payment' && (
           <div className="mb-6">
@@ -267,7 +267,6 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
             </p>
           </div>
         )}
-
         
         {/* Notes */}
         <div className="mb-6">
@@ -393,7 +392,40 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
           </div>
         )}
 
-      
+        {/* Installment Plan Selection */}
+        {(saleData.paymentType === 'Down Payment + Installments' || saleData.paymentType === 'Installment Only') && (
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Installment Plan
+            </label>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {installmentPlans.map((plan) => (
+                <div
+                  key={plan.id}
+                  className={`p-4 border rounded-lg cursor-pointer transition-all ${
+                    saleData.installmentPlanId === plan.id
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                  onClick={() => handleInstallmentPlanChange(plan.id)}
+                >
+                  <div className="flex items-center space-x-3 mb-2">
+                    <Calendar className="h-5 w-5 text-gray-600" />
+                    <span className="font-medium text-gray-900">{plan.name}</span>
+                  </div>
+                  <p className="text-sm text-gray-500 mb-2">{plan.description}</p>
+                  <div className="text-sm text-gray-600">
+                    <p>{plan.num_installments} installments</p>
+                    <p>Every {plan.frequency_interval || 1} {plan.frequency_unit || 'month'}(s)</p>
+                    <p>{(plan.interest_rate * 100).toFixed(1)}% interest</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        
 
         {/* Custom Installment Fields */}
         {saleData.paymentType === 'Custom Installment' && (
