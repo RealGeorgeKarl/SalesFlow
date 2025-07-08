@@ -16,9 +16,7 @@ export interface NewSaleData {
   cart: CartItem[];
   sellerName: string;
   notes: string;
-  paymentType: 'Full Payment' | 'Down Payment + Installments' | 'Installment Only' | 'Custom Installment';
-  downPaymentAmount: number;
-  installmentPlanId: string;
+  paymentType: 'Full Payment' | 'Custom Installment';
   customDownPaymentAmount?: number;
   customInterestRate?: number;
   customFrequencyUnit?: FrequencyUnit;
@@ -49,8 +47,6 @@ const NewSale: React.FC = () => {
     sellerName: persona?.name || '',
     notes: '',
     paymentType: 'Full Payment',
-    downPaymentAmount: 0,
-    installmentPlanId: '',
     customDownPaymentAmount: 0,
     customStartDate: new Date().toISOString().split('T')[0], // Initialize with today's date
     paymentMethodType: 'Cash',
@@ -117,31 +113,9 @@ const NewSale: React.FC = () => {
       };
 
       // Add installment-specific parameters
-      if (saleData.paymentType === 'Down Payment + Installments') {
-        rpcParams.p_down_payment = saleData.downPaymentAmount;
-        rpcParams.p_payment_type = 'Down Payment';
-
-        // Get installment plan details
-        const plan = installmentPlans.find(p => p.id === saleData.installmentPlanId);
-        if (plan) {
-          rpcParams.p_interest_rate = plan.interest_rate;
-          rpcParams.p_frequency_unit = plan.frequency_unit;
-          rpcParams.p_frequency_interval = plan.frequency_interval;
-          rpcParams.p_number_of_installments = plan.num_installments;
-          rpcParams.p_start_date_time = saleData.customStartDate ? new Date(saleData.customStartDate).toISOString() : new Date().toISOString();
-        }
-      } else if (saleData.paymentType === 'Installment Only') {
-        const plan = installmentPlans.find(p => p.id === saleData.installmentPlanId);
-        if (plan) {
-          rpcParams.p_interest_rate = plan.interest_rate;
-          rpcParams.p_frequency_unit = plan.frequency_unit;
-          rpcParams.p_frequency_interval = plan.frequency_interval;
-          rpcParams.p_number_of_installments = plan.num_installments;
-          rpcParams.p_start_date_time = saleData.customStartDate ? new Date(saleData.customStartDate).toISOString() : new Date().toISOString();
-        }
-      } else if (saleData.paymentType === 'Custom Installment') {
+      if (saleData.paymentType === 'Custom Installment') {
         // Correct and concise way using the ternary operator
-        rpcParams.p_payment_type = (saleData.customDownPaymentAmount > 0) 
+        rpcParams.p_payment_type = (saleData.customDownPaymentAmount && saleData.customDownPaymentAmount > 0) 
           ? 'Down Payment' : 'Installment Only';
         rpcParams.p_down_payment = saleData.customDownPaymentAmount || 0;
         rpcParams.p_interest_rate = (saleData.customInterestRate || 0) / 100;
@@ -183,8 +157,6 @@ const NewSale: React.FC = () => {
         sellerName: persona?.name || '',
         notes: '',
         paymentType: 'Full Payment',
-        downPaymentAmount: 0,
-        installmentPlanId: '',
         customDownPaymentAmount: 0,
         customStartDate: new Date().toISOString().split('T')[0],
         paymentMethodType: 'Cash',
