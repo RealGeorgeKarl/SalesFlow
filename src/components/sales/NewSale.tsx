@@ -106,7 +106,7 @@ const NewSale: React.FC = () => {
       let rpcParams: any = {
         p_payment_type: saleData.paymentType,
         p_seller_name: saleData.sellerName,
-        p_items: JSON.stringify(items),
+        p_items: [items],
         p_customer_id: saleData.customer?.id || null,
         p_notes: saleData.notes || null,
         p_payment_method_type: saleData.paymentMethodType,
