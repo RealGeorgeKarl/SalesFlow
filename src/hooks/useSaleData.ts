@@ -49,7 +49,6 @@ export const useSaleData = (): UseSaleDataReturn => {
           created_at: new Date().toISOString(),
         }));
 
-                console.log(formattedCustomers);
 
         // Format products
         const formattedProducts: Product[] = data.products.map((product: any) => ({
@@ -62,8 +61,6 @@ export const useSaleData = (): UseSaleDataReturn => {
           is_active: true,
           created_at: new Date().toISOString(),
         }));
-
-                console.log(formattedProducts);
 
         setCustomers(formattedCustomers);
         setProducts(formattedProducts);
