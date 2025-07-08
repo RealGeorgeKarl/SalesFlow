@@ -159,24 +159,37 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
   };
 
   const handlePaymentTypeChange = (type: NewSaleData['paymentType']) => {
-    onUpdate({
-      paymentType: type,
-      customDownPaymentAmount: undefined,
-      customInterestRate: undefined,
-      customFrequencyUnit: undefined,
-      customFrequencyInterval: undefined,
-      customStartDate: undefined,
-      customNumInstallments: undefined,
-    });
-    setPaymentSchedule([]);
+    if (type === 'Custom Installment') {
+      onUpdate({
+        paymentType: type,
+        customDownPaymentAmount: 0,
+        customInterestRate: 0,
+        customFrequencyUnit: 'month',
+        customFrequencyInterval: 1,
+        customStartDate: new Date().toISOString().split('T')[0],
+        customNumInstallments: 3,
+      });
+      
+      // Update local state to match
+      setCustomInterestRate(0);
+      setCustomNumInstallments(3);
+      setCustomDownPaymentAmount(0);
+      setCustomFrequencyUnit('month');
+      setCustomFrequencyInterval(1);
+      setCustomStartDate(new Date().toISOString().split('T')[0]);
+    } else {
+      onUpdate({
+        paymentType: type,
+        customDownPaymentAmount: undefined,
+        customInterestRate: undefined,
+        customFrequencyUnit: undefined,
+        customFrequencyInterval: undefined,
+        customStartDate: undefined,
+        customNumInstallments: undefined,
+      });
+    }
     
-    // Reset custom values
-    setCustomInterestRate(0);
-    setCustomNumInstallments(3);
-    setCustomDownPaymentAmount(0);
-    setCustomFrequencyUnit('month');
-    setCustomFrequencyInterval(1);
-    setCustomStartDate('');
+    setPaymentSchedule([]);
   };
 
   const handleCustomValueChange = (field: string, value: any) => {
