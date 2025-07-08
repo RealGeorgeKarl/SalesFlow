@@ -20,7 +20,7 @@ export const useSales = (): UseSalesReturn => {
 
     try {
       const { data, error } = await supabase.rpc('get_sales_details_by_user');
-      console.log(data);
+      console.log('raw data from rpc: ',data);
       if (error) throw error;
 
       // The RPC function returns an array with a single object containing the sales array
@@ -34,7 +34,7 @@ export const useSales = (): UseSalesReturn => {
             : [];
         }
       }
-      
+      console.log('salesData:' salesData);
       const formattedSales: Sale[] = (salesData || []).map((sale: any) => ({
         id: sale.id,
         customer_id: sale.customer?.customer_id,
@@ -59,7 +59,7 @@ export const useSales = (): UseSalesReturn => {
         payment_history: sale.payment_history || [],
       }));
 
-      console.log(formattedSales);
+      console.log('formattedSales',formattedSales);
       setSales(formattedSales);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch sales');
