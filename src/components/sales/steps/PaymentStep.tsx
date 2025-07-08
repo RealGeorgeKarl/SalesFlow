@@ -23,7 +23,14 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
   const [customDownPaymentAmount, setCustomDownPaymentAmount] = useState(0);
   const [customFrequencyUnit, setCustomFrequencyUnit] = useState<FrequencyUnit>('month');
   const [customFrequencyInterval, setCustomFrequencyInterval] = useState(1);
+  const [customStartDate, setCustomStartDate] = useState('');
 
+  // Sync local state with saleData
+  useEffect(() => {
+    if (saleData.customStartDate) {
+      setCustomStartDate(saleData.customStartDate);
+    }
+  }, [saleData.customStartDate]);
 
   // Payment method constants
   const PAYMENT_METHOD_TYPES: PaymentMethodType[] = ['Cash', 'Card', 'Online Payment', 'Other'];
@@ -171,6 +178,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
     setCustomDownPaymentAmount(0);
     setCustomFrequencyUnit('month');
     setCustomFrequencyInterval(1);
+    setCustomStartDate('');
   };
 
   const handleDownPaymentChange = (amount: number) => {
@@ -202,6 +210,10 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
       case 'frequencyInterval':
         setCustomFrequencyInterval(value);
         onUpdate({ customFrequencyInterval: value });
+        break;
+      case 'startDate':
+        setCustomStartDate(value);
+        onUpdate({ customStartDate: value });
         break;
     }
   };
@@ -245,7 +257,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
               <input
                 type="date"
                 value={saleData.customStartDate || ''}
-                onChange={(e) => onUpdate({ saleData.customStartDate: e.target.value })}
+                onChange={(e) => onUpdate({ customStartDate: e.target.value })}
                 className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 min={new Date().toISOString().split('T')[0]}
               />
@@ -378,39 +390,6 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
             <p className="text-sm text-gray-500 mt-1">
               Maximum: ${saleData.totalAmount.toFixed(2)}
             </p>
-          </div>
-        )}
-
-        {/* Installment Plan Selection */}
-        {(saleData.paymentType === 'Down Payment + Installments' || saleData.paymentType === 'Installment Only') && (
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Installment Plan
-            </label>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {installmentPlans.map((plan) => (
-                <div
-                  key={plan.id}
-                  className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                    saleData.installmentPlanId === plan.id
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                  onClick={() => handleInstallmentPlanChange(plan.id)}
-                >
-                  <div className="flex items-center space-x-3 mb-2">
-                    <Calendar className="h-5 w-5 text-gray-600" />
-                    <span className="font-medium text-gray-900">{plan.name}</span>
-                  </div>
-                  <p className="text-sm text-gray-500 mb-2">{plan.description}</p>
-                  <div className="text-sm text-gray-600">
-                    <p>{plan.num_installments} installments</p>
-                    <p>Every {plan.frequency_interval || 1} {plan.frequency_unit || 'month'}(s)</p>
-                    <p>{(plan.interest_rate * 100).toFixed(1)}% interest</p>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         )}
 
