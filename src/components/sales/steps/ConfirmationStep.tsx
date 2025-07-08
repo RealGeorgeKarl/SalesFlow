@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle, User, ShoppingCart, CreditCard, FileText, Printer, Loader2 } from 'lucide-react';
+import { CheckCircle, User, ShoppingCart, CreditCard, FileText, Loader2 } from 'lucide-react';
 import { NewSaleData } from '../NewSale';
 import { useAuth } from '../../../contexts/AuthContext';
 
@@ -9,19 +9,15 @@ interface ConfirmationStepProps {
   isCompletingSale: boolean;
 }
 
-const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ saleData, onCompleteSale, isCompletingSale }) => {
+const ConfirmationStep = React.forwardRef<HTMLDivElement, ConfirmationStepProps>(({ saleData, onCompleteSale, isCompletingSale }, ref) => {
   const { persona } = useAuth();
   
-  const handlePrint = () => {
-    window.print();
-  };
-
   const handleComplete = async () => {
     await onCompleteSale();
   };
 
   return (
-    <div className="space-y-6">
+    <div ref={ref} className="space-y-6">
       <div className="text-center">
         <div className="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
           <CheckCircle className="h-8 w-8 text-green-600" />
@@ -171,13 +167,6 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ saleData, onComplet
       {/* Action Buttons */}
       <div className="flex justify-center space-x-4 pt-6">
         <button
-          onClick={handlePrint}
-          className="flex items-center px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
-        >
-          <Printer className="h-5 w-5 mr-2" />
-          Print Receipt
-        </button>
-        <button
           onClick={handleComplete}
           disabled={isCompletingSale}
           className="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700"
@@ -197,6 +186,8 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ saleData, onComplet
       </div>
     </div>
   );
-};
+});
+
+ConfirmationStep.displayName = 'ConfirmationStep';
 
 export default ConfirmationStep;

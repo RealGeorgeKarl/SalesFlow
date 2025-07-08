@@ -1,9 +1,12 @@
 import React from 'react';
-import { X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { X, CheckCircle, AlertCircle, Loader2, Printer, Download } from 'lucide-react';
 
 interface SaleResultDialogProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
+  onDone?: () => void;
+  onPrintReceipt?: () => void;
+  onGenerateImage?: () => void;
   message: string;
   type: 'success' | 'error';
   isLoading?: boolean;
@@ -12,6 +15,9 @@ interface SaleResultDialogProps {
 const SaleResultDialog: React.FC<SaleResultDialogProps> = ({ 
   isOpen, 
   onClose, 
+  onDone,
+  onPrintReceipt,
+  onGenerateImage,
   message, 
   type, 
   isLoading = false 
@@ -78,24 +84,47 @@ const SaleResultDialog: React.FC<SaleResultDialogProps> = ({
 
           {/* Action Button */}
           {!isLoading && (
-            <div className="flex justify-center space-x-3">
-              <button
-                onClick={onClose}
-                className={`px-6 py-3 ${colors.button} text-white rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center`}
-              >
-                {type === 'success' ? (
-                  <>
-                    <CheckCircle className="h-5 w-5 mr-2" />
-                    Continue
-                  </>
-                ) : (
-                  <>
+            <>
+              {type === 'success' ? (
+                <div className="flex flex-col space-y-3">
+                  <div className="flex justify-center space-x-3">
+                    <button
+                      onClick={onPrintReceipt}
+                      className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors flex items-center"
+                    >
+                      <Printer className="h-4 w-4 mr-2" />
+                      Print Receipt
+                    </button>
+                    <button
+                      onClick={onGenerateImage}
+                      className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors flex items-center"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Generate Image
+                    </button>
+                  </div>
+                  <div className="flex justify-center">
+                    <button
+                      onClick={onDone}
+                      className={`px-6 py-3 ${colors.button} text-white rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center`}
+                    >
+                      <CheckCircle className="h-5 w-5 mr-2" />
+                      Done
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex justify-center">
+                  <button
+                    onClick={onClose}
+                    className={`px-6 py-3 ${colors.button} text-white rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center`}
+                  >
                     <X className="h-5 w-5 mr-2" />
                     Close
-                  </>
-                )}
-              </button>
-            </div>
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
