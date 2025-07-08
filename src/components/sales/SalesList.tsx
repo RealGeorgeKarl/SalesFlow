@@ -7,6 +7,7 @@ import { Sale } from '../../types';
 
 const SalesList: React.FC = () => {
   const { sales, isLoading, error, fetchSales } = useSales();
+  console.log(sales);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
@@ -24,6 +25,7 @@ const SalesList: React.FC = () => {
     
     return matchesSearch && matchesStatus;
   });
+  console.log(filteredSales);
 
   const getStatusColor = (status: string) => {
     switch (status) {
