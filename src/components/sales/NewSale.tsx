@@ -52,6 +52,7 @@ const NewSale: React.FC = () => {
     downPaymentAmount: 0,
     installmentPlanId: '',
     customDownPaymentAmount: 0,
+    customStartDate: new Date().toISOString().split('T')[0], // Initialize with today's date
     paymentMethodType: 'Cash',
     paymentMethod: 'Exact Cash',
     referenceCode: '',
@@ -127,7 +128,7 @@ const NewSale: React.FC = () => {
           rpcParams.p_frequency_unit = plan.frequency_unit;
           rpcParams.p_frequency_interval = plan.frequency_interval;
           rpcParams.p_number_of_installments = plan.num_installments;
-          rpcParams.p_start_date_time = new Date().toISOString();
+          rpcParams.p_start_date_time = saleData.customStartDate ? new Date(saleData.customStartDate).toISOString() : new Date().toISOString();
         }
       } else if (saleData.paymentType === 'Installment Only') {
         const plan = installmentPlans.find(p => p.id === saleData.installmentPlanId);
@@ -136,7 +137,7 @@ const NewSale: React.FC = () => {
           rpcParams.p_frequency_unit = plan.frequency_unit;
           rpcParams.p_frequency_interval = plan.frequency_interval;
           rpcParams.p_number_of_installments = plan.num_installments;
-          rpcParams.p_start_date_time = new Date().toISOString();
+          rpcParams.p_start_date_time = saleData.customStartDate ? new Date(saleData.customStartDate).toISOString() : new Date().toISOString();
         }
       } else if (saleData.paymentType === 'Custom Installment') {
         // Correct and concise way using the ternary operator
@@ -185,6 +186,7 @@ const NewSale: React.FC = () => {
         downPaymentAmount: 0,
         installmentPlanId: '',
         customDownPaymentAmount: 0,
+        customStartDate: new Date().toISOString().split('T')[0],
         paymentMethodType: 'Cash',
         paymentMethod: 'Exact Cash',
         referenceCode: '',

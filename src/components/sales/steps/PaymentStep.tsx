@@ -25,6 +25,13 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
   const [customFrequencyInterval, setCustomFrequencyInterval] = useState(1);
   const [customStartDate, setCustomStartDate] = useState('');
 
+  // Sync local state with saleData
+  useEffect(() => {
+    if (saleData.customStartDate) {
+      setCustomStartDate(saleData.customStartDate);
+    }
+  }, [saleData.customStartDate]);
+
   // Payment method constants
   const PAYMENT_METHOD_TYPES: PaymentMethodType[] = ['Cash', 'Card', 'Online Payment', 'Other'];
   
@@ -112,7 +119,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
           intervalDays = 30;
       }
       
-      startDate = customStartDate ? new Date(customStartDate) : new Date();
+      startDate = saleData.customStartDate ? new Date(saleData.customStartDate) : new Date();
     } else {
       plan = installmentPlans.find(p => p.id === saleData.installmentPlanId);
       if (!plan) return;
@@ -120,7 +127,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
       numInstallments = plan.num_installments;
       interestRate = plan.interest_rate;
       intervalDays = plan.interval_days;
-      startDate = new Date();
+      startDate = saleData.customStartDate ? new Date(saleData.customStartDate) : new Date();
     }
 
     const totalAmount = saleData.totalAmount;
@@ -396,6 +403,28 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
           </div>
         )}
 
+        {/* Start Date for Installment Plans */}
+        {saleData.paymentType !== 'Full Payment' && (
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Start Date
+            </label>
+            <div className="relative">
+              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
+                type="date"
+                value={saleData.customStartDate || ''}
+                onChange={(e) => onUpdate({ customStartDate: e.target.value })}
+                className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                min={new Date().toISOString().split('T')[0]}
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">
+              When should the {saleData.paymentType === 'Full Payment' ? 'payment' : 'installments'} start?
+            </p>
+          </div>
+        )}
+
         {/* Custom Installment Fields */}
         {saleData.paymentType === 'Custom Installment' && (
           <div className="mb-6 bg-gray-50 rounded-lg p-6">
@@ -461,7 +490,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Frequency Unit
@@ -491,26 +520,13 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
                   min="1"
                 />
               </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Start Date
-                </label>
-                <input
-                  type="date"
-                  value={customStartDate}
-                  onChange={(e) => handleCustomValueChange('startDate', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  min={new Date().toISOString().split('T')[0]}
-                />
-              </div>
             </div>
             
             <div className="text-sm text-gray-600">
               <p>
                 Payment every {customFrequencyInterval} {customFrequencyUnit}
                 {customFrequencyInterval > 1 ? 's' : ''} 
-                {customStartDate && ` starting from ${new Date(customStartDate).toLocaleDateString()}`}
+                {saleData.customStartDate && ` starting from ${new Date(saleData.customStartDate).toLocaleDateString()}`}
               </p>
             </div>
           </div>
