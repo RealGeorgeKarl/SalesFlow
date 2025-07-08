@@ -155,7 +155,15 @@ const NewSale: React.FC = () => {
 
       if (error) throw error;
 
-      const result: RpcResult = data[0];
+      // Handle both array and scalar responses from RPC
+      let result: RpcResult;
+      if (Array.isArray(data)) {
+        if (data.length === 0) throw new Error('No data returned from sale processing');
+        result = data[0];
+      } else {
+        result = data;
+      }
+      
       if (!result.success) {
         throw new Error(result.message);
       }
