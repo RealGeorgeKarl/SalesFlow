@@ -24,9 +24,18 @@ export const useSales = (): UseSalesReturn => {
       if (error) throw error;
 
       // The RPC function returns an array with a single object containing the sales array
-      const salesData = data && data.length > 0 ? data[0].get_sales_details_by_user : [];
+      // Add robust checks to ensure we always have an array to map over
+      let salesData = [];
+      if (data && Array.isArray(data) && data.length > 0) {
+        const firstResult = data[0];
+        if (firstResult && firstResult.get_sales_details_by_user) {
+          salesData = Array.isArray(firstResult.get_sales_details_by_user) 
+            ? firstResult.get_sales_details_by_user 
+            : [];
+        }
+      }
       
-      const formattedSales: Sale[] = salesData.map((sale: any) => ({
+      const formattedSales: Sale[] = (salesData || []).map((sale: any) => ({
         id: sale.id,
         customer_id: sale.customer?.customer_id,
         customer: sale.customer ? {
