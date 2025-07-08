@@ -377,14 +377,12 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
               <div className="relative">
                 <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
-                  type="number"
+                  type="text"
                   value={customDownPaymentAmount}
                   onChange={(e) => handleCustomValueChange('downPaymentAmount', parseFloat(e.target.value) || 0)}
+                  onWheel={(e) => e.currentTarget.blur()}
                   className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="0.00"
-                  min="0"
-                  max={saleData.totalAmount}
-                  step="0.01"
                 />
               </div>
               <p className="text-sm text-gray-500 mt-1">
@@ -400,13 +398,12 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
                 <div className="relative">
                   <Percent className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
-                    type="number"
+                    type="text"
                     value={customInterestRate}
                     onChange={(e) => handleCustomValueChange('interestRate', parseFloat(e.target.value) || 0)}
+                    onWheel={(e) => e.currentTarget.blur()}
                     className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="0.0"
-                    min="0"
-                    step="0.1"
                   />
                 </div>
               </div>
@@ -418,12 +415,12 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
                 <div className="relative">
                   <Hash className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
-                    type="number"
+                    type="text"
                     value={customNumInstallments}
                     onChange={(e) => handleCustomValueChange('numInstallments', parseInt(e.target.value) || 1)}
+                    onWheel={(e) => e.currentTarget.blur()}
                     className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="3"
-                    min="1"
                   />
                 </div>
               </div>
@@ -451,12 +448,12 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
                   Frequency Interval
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   value={customFrequencyInterval}
                   onChange={(e) => handleCustomValueChange('frequencyInterval', parseInt(e.target.value) || 1)}
+                  onWheel={(e) => e.currentTarget.blur()}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="1"
-                  min="1"
                 />
               </div>
             </div>
