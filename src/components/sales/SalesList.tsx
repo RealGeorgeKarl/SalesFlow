@@ -65,6 +65,7 @@ const SalesList: React.FC = () => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
+      
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
