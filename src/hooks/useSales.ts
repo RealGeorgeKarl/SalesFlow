@@ -26,7 +26,7 @@ export const useSales = (): UseSalesReturn => {
       if (error) throw error;
 
       let salesData: any[] = []; // Initialize as empty array of any type
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         const rpcResult = data[0];
         if (rpcResult && typeof rpcResult === 'object' && rpcResult.get_sales_details_by_user) {
           // Ensure get_sales_details_by_user is an array before assigning
