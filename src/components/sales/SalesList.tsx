@@ -1,86 +1,23 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Filter, Eye, Plus, Calendar, DollarSign } from 'lucide-react';
+import { Search, Filter, Eye, Plus, Calendar, DollarSign, Loader2, AlertCircle } from 'lucide-react';
+import { useSales } from '../../hooks/useSales';
+import SaleDetailsModal from './modals/SaleDetailsModal';
 import { Sale } from '../../types';
 
 const SalesList: React.FC = () => {
+  const { sales, isLoading, error, fetchSales } = useSales();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
-
-  // Mock sales data
-  const sales: Sale[] = [
-    {
-      id: '1',
-      customer_id: '1',
-      customer: {
-        id: '1',
-        first_name: 'John',
-        last_name: 'Smith',
-        email: 'john.smith@email.com',
-        phone: '+1 (555) 123-4567',
-        created_at: '2024-01-01T00:00:00Z',
-      },
-      seller_name: 'Jane Doe',
-      total_amount: 1200.00,
-      amount_paid: 400.00,
-      remaining_balance: 800.00,
-      payment_type: 'Down Payment + Installments',
-      down_payment_amount: 400.00,
-      installment_plan_id: '1',
-      status: 'Active',
-      notes: 'Customer preferred monthly payments',
-      created_at: '2024-01-10T10:00:00Z',
-      created_by: 'user-123',
-    },
-    {
-      id: '2',
-      customer_id: '2',
-      customer: {
-        id: '2',
-        first_name: 'Sarah',
-        last_name: 'Johnson',
-        email: 'sarah.johnson@email.com',
-        phone: '+1 (555) 987-6543',
-        created_at: '2024-01-02T00:00:00Z',
-      },
-      seller_name: 'Bob Wilson',
-      total_amount: 850.00,
-      amount_paid: 850.00,
-      remaining_balance: 0.00,
-      payment_type: 'Full Payment',
-      status: 'Completed',
-      created_at: '2024-01-12T14:30:00Z',
-      created_by: 'user-123',
-    },
-    {
-      id: '3',
-      customer_id: '3',
-      customer: {
-        id: '3',
-        first_name: 'Mike',
-        last_name: 'Wilson',
-        email: 'mike.wilson@email.com',
-        phone: '+1 (555) 456-7890',
-        created_at: '2024-01-03T00:00:00Z',
-      },
-      seller_name: 'Alice Brown',
-      total_amount: 2100.00,
-      amount_paid: 350.00,
-      remaining_balance: 1750.00,
-      payment_type: 'Installment Only',
-      installment_plan_id: '2',
-      status: 'Active',
-      created_at: '2024-01-08T09:15:00Z',
-      created_by: 'user-123',
-    },
-  ];
+  const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   const filteredSales = sales.filter(sale => {
     const matchesSearch = sale.customer && (
       `${sale.customer.first_name} ${sale.customer.last_name}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
       sale.seller_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      sale.id.toLowerCase().includes(searchQuery.toLowerCase())
+      sale.id.toString().toLowerCase().includes(searchQuery.toLowerCase())
     );
     
     const matchesStatus = statusFilter === 'all' || sale.status.toLowerCase() === statusFilter;
@@ -90,7 +27,7 @@ const SalesList: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Active':
+      case 'In Progress':
         return 'bg-blue-100 text-blue-800';
       case 'Completed':
         return 'bg-green-100 text-green-800';
@@ -102,6 +39,29 @@ const SalesList: React.FC = () => {
         return 'bg-gray-100 text-gray-800';
     }
   };
+
+  const handleViewDetails = (sale: Sale) => {
+    setSelectedSale(sale);
+    setShowDetailsModal(true);
+  };
+
+  const handleCloseDetailsModal = () => {
+    setShowDetailsModal(false);
+    setSelectedSale(null);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="p-6 max-w-7xl mx-auto">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+            <p className="text-lg text-gray-600">Loading sales data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -119,6 +79,22 @@ const SalesList: React.FC = () => {
           New Sale
         </Link>
       </div>
+
+      {/* Error Display */}
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-center space-x-2">
+            <AlertCircle className="h-5 w-5 text-red-600" />
+            <span className="text-red-700">{error}</span>
+            <button
+              onClick={fetchSales}
+              className="ml-auto px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
@@ -140,7 +116,7 @@ const SalesList: React.FC = () => {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Status</option>
-              <option value="active">Active</option>
+              <option value="in progress">In Progress</option>
               <option value="completed">Completed</option>
               <option value="cancelled">Cancelled</option>
               <option value="terminated">Terminated</option>
@@ -237,13 +213,13 @@ const SalesList: React.FC = () => {
                     {new Date(sale.created_at).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <Link
-                      to={`/sales/${sale.id}`}
-                      className="text-blue-600 hover:text-blue-900 flex items-center"
+                    <button
+                      onClick={() => handleViewDetails(sale)}
+                      className="text-blue-600 hover:text-blue-900 flex items-center transition-colors"
                     >
                       <Eye className="h-4 w-4 mr-1" />
                       View
-                    </Link>
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -269,9 +245,9 @@ const SalesList: React.FC = () => {
           <div className="flex items-center">
             <Calendar className="h-8 w-8 text-blue-600" />
             <div className="ml-4">
-              <p className="text-sm text-gray-600">Active Sales</p>
+              <p className="text-sm text-gray-600">In Progress Sales</p>
               <p className="text-2xl font-semibold text-gray-900">
-                {sales.filter(sale => sale.status === 'Active').length}
+                {sales.filter(sale => sale.status === 'In Progress').length}
               </p>
             </div>
           </div>
@@ -288,6 +264,13 @@ const SalesList: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Sale Details Modal */}
+      <SaleDetailsModal
+        isOpen={showDetailsModal}
+        onClose={handleCloseDetailsModal}
+        sale={selectedSale}
+      />
     </div>
   );
 };

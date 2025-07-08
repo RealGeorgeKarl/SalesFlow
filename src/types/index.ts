@@ -72,21 +72,47 @@ export interface InstallmentPlan {
 export type FrequencyUnit = 'day' | 'week' | 'month' | 'year';
 
 export interface Sale {
-  id: string;
-  customer_id: string;
+  id: number;
+  customer_id?: number;
   customer?: Customer;
   seller_name?: string;
   total_amount: number;
   amount_paid: number;
   remaining_balance: number;
-  payment_type: 'Full Payment' | 'Down Payment + Installments' | 'Installment Only';
+  payment_type: 'Full Payment' | 'Down Payment' | 'Installment Only' | 'Down Payment + Installments';
   down_payment_amount?: number;
   installment_plan_id?: string;
   installment_plan?: InstallmentPlan;
-  status: 'Active' | 'Completed' | 'Cancelled' | 'Terminated';
+  status: 'In Progress' | 'Completed' | 'Cancelled' | 'Terminated';
   notes?: string;
   created_at: string;
-  created_by: string;
+  created_by?: string;
+  items?: SaleItem[];
+  schedule?: PaymentScheduleItem[];
+  payment_history?: PaymentHistoryItem[];
+}
+
+export interface SaleItem {
+  quantity: number;
+  product_id: number;
+  unit_price: number;
+  total_price: number;
+  product_name: string;
+}
+
+export interface PaymentScheduleItem {
+  status: 'Pending' | 'Paid' | 'Overdue' | 'Cancelled';
+  amount_due: number;
+  schedule_id: number;
+  due_date_time: string;
+}
+
+export interface PaymentHistoryItem {
+  payment_id: number;
+  amount_paid: number;
+  payment_method: string;
+  reference_code?: string;
+  payment_datetime: string;
 }
 
 export interface SaleItem {
