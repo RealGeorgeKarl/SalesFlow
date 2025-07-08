@@ -113,7 +113,6 @@ const NewSale: React.FC = () => {
         p_payment_method_type: saleData.paymentMethodType,
         p_payment_method: saleData.paymentMethod,
         p_reference_code: saleData.referenceCode || null,
-        p_
       };
 
       // Add installment-specific parameters
