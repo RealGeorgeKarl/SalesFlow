@@ -144,6 +144,7 @@ const NewSale: React.FC = () => {
         rpcParams.p_number_of_installments = saleData.customNumInstallments;
         rpcParams.p_start_date_time = saleData.customStartDate ? new Date(saleData.customStartDate).toISOString() : new Date().toISOString();
       }
+      console.log(rpcParams);
 
       // Call the process_sale RPC function
       const { data, error } = await supabase.rpc('process_sale', rpcParams);
