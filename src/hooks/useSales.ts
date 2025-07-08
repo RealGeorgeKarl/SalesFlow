@@ -34,7 +34,7 @@ export const useSales = (): UseSalesReturn => {
             : [];
         }
       }
-      console.log('salesData:' salesData);
+      console.log('salesData:', salesData);
       const formattedSales: Sale[] = (salesData || []).map((sale: any) => ({
         id: sale.id,
         customer_id: sale.customer?.customer_id,
