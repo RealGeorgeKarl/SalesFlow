@@ -139,11 +139,9 @@ const NewSale: React.FC = () => {
           rpcParams.p_start_date_time = new Date().toISOString();
         }
       } else if (saleData.paymentType === 'Custom Installment') {
-        rpcParams.p_payment_type = if (saleData.customDownPaymentAmount > 0) {
-          'Down Payment'
-        } else {
-        'Installment Only'
-        }
+        // Correct and concise way using the ternary operator
+        rpcParams.p_payment_type = (saleData.customDownPaymentAmount > 0) 
+          ? 'Down Payment' : 'Installment Only';
         rpcParams.p_down_payment = saleData.customDownPaymentAmount || 0;
         rpcParams.p_interest_rate = (saleData.customInterestRate || 0) / 100;
         rpcParams.p_frequency_unit = saleData.customFrequencyUnit;
