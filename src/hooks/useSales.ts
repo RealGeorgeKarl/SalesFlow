@@ -50,6 +50,7 @@ export const useSales = (): UseSalesReturn => {
         payment_history: sale.payment_history || [],
       }));
 
+      console.log(formattedSales);
       setSales(formattedSales);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch sales');
