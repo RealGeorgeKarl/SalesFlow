@@ -181,7 +181,7 @@ const SalesList: React.FC = () => {
       </div>
 
       {/* Sales Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden max-h-[600px] overflow-y-auto">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
