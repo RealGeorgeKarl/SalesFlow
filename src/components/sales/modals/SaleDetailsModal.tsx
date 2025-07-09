@@ -209,7 +209,7 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sa
                 <AlertCircle className="h-6 w-6 text-yellow-600" />
                 <h3 className="text-lg font-semibold text-yellow-900">Remaining Balance</h3>
               </div>
-              <p className="text-3xl font-bold text-yellow-900">${formatCurrency(sale.remaining_balance)}</p>
+              <p className="text-3xl font-bold text-yellow-900">{formatCurrency(sale.remaining_balance)}</p>
               <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(sale.status)} mt-2`}>
                 {sale.status}
               </span>
@@ -317,7 +317,7 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sa
                           </div>
                         </td>
                         <td className="py-4 px-4 text-right text-gray-900">
-                          ${formatCurrency(item.unit_price)}
+                          {formatCurrency(item.unit_price)}
                         </td>
                         <td className="py-4 px-4 text-right text-gray-900">
                           {item.quantity}
@@ -360,7 +360,7 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sa
                     </div>
                     <div className="text-right">
                       <p className="text-lg font-bold text-green-600">
-                        ${formatCurrency(payment.amount_paid)}
+                        {formatCurrency(payment.amount_paid)}
                       </p>
                     </div>
                   </div>
@@ -395,7 +395,7 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sa
                         {schedule.status}
                       </span>
                       <p className="text-lg font-bold text-gray-900">
-                        {formatCurrency(schedule.amount_due)}
+                        {formatCurrency(schedule.amount_due}
                       </p>
                     </div>
                   </div>
