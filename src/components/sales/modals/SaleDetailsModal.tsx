@@ -198,7 +198,7 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sa
                 <CheckCircle className="h-6 w-6 text-green-600" />
                 <h3 className="text-lg font-semibold text-green-900">Amount Paid</h3>
               </div>
-              <p className="text-3xl font-bold text-green-900">${sale.amount_paid.toFixed(2)}</p>
+              <p className="text-3xl font-bold text-green-900">{formatCurrency(sale.amount_paid)}</p>
               <p className="text-sm text-green-700 mt-1">
                 {((sale.amount_paid / sale.total_amount) * 100).toFixed(1)}% completed
               </p>
@@ -209,7 +209,7 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sa
                 <AlertCircle className="h-6 w-6 text-yellow-600" />
                 <h3 className="text-lg font-semibold text-yellow-900">Remaining Balance</h3>
               </div>
-              <p className="text-3xl font-bold text-yellow-900">${sale.remaining_balance.toFixed(2)}</p>
+              <p className="text-3xl font-bold text-yellow-900">${formatCurrency(sale.remaining_balance)}</p>
               <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(sale.status)} mt-2`}>
                 {sale.status}
               </span>
@@ -317,13 +317,13 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sa
                           </div>
                         </td>
                         <td className="py-4 px-4 text-right text-gray-900">
-                          ${item.unit_price.toFixed(2)}
+                          ${formatCurrency(item.unit_price)}
                         </td>
                         <td className="py-4 px-4 text-right text-gray-900">
                           {item.quantity}
                         </td>
                         <td className="py-4 px-4 text-right font-semibold text-gray-900">
-                          ${item.total_price.toFixed(2)}
+                          {formatCurrency(item.total_price)}
                         </td>
                       </tr>
                     ))}
@@ -360,7 +360,7 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sa
                     </div>
                     <div className="text-right">
                       <p className="text-lg font-bold text-green-600">
-                        ${payment.amount_paid.toFixed(2)}
+                        ${formatCurrency(payment.amount_paid)}
                       </p>
                     </div>
                   </div>
@@ -395,7 +395,7 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sa
                         {schedule.status}
                       </span>
                       <p className="text-lg font-bold text-gray-900">
-                        ${schedule.amount_due.toFixed(2)}
+                        {formatCurrency(schedule.amount_due)}
                       </p>
                     </div>
                   </div>
