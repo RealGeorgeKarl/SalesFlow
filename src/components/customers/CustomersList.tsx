@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Search, Plus, User, Mail, Phone, Edit, Trash2, MapPin, Calendar, DollarSign, ShoppingCart, Loader2, AlertCircle, X } from 'lucide-react';
 import { useCustomers } from '../../hooks/useCustomers';
 import { Customer, SocialMedia } from '../../types';
-import {formathCurrency} from "../../utils/formatters";
+import {formatCurrency} from "../../utils/formatters";
 
 
 const CustomersList: React.FC = () => {
@@ -252,7 +252,7 @@ const CustomersList: React.FC = () => {
                   <span className="text-gray-500">Total Sales</span>
                 </div>
                 <span className="font-medium text-gray-900">
-                  ${customer.total_sales?.toFixed(2) || '0.00'}
+                  ${formatCurrency(customer.total_sales)}
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm mt-1">
