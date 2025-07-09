@@ -16,6 +16,8 @@ const SalesList: React.FC = () => {
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+   const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   const filteredSales = sales.filter(sale => {
     const matchesSearch = sale.customer && (
@@ -49,6 +51,56 @@ const SalesList: React.FC = () => {
     return matchesSearch && matchesStatus && matchesDateRange;
   });
 
+  const sortedSales = React.useMemo(() => {
+    let sortableSales = [...filteredSales]; // Use filteredSales as the base
+
+    if (sortColumn) {
+        sortableSales.sort((a, b) => {
+            let valA: any;
+            let valB: any;
+
+            switch (sortColumn) {
+                case 'id':
+                    valA = a.id;
+                    valB = b.id;
+                    break;
+                case 'customer_name':
+                    valA = a.customer ? `${a.customer.first_name} ${a.customer.last_name}` : '';
+                    valB = b.customer ? `${b.customer.first_name} ${b.customer.last_name}` : '';
+                    break;
+                case 'seller_name':
+                    valA = a.seller_name || '';
+                    valB = b.seller_name || '';
+                    break;
+                case 'total_amount':
+                    valA = a.total_amount;
+                    valB = b.total_amount;
+                    break;
+                case 'status':
+                    valA = a.status || '';
+                    valB = b.status || '';
+                    break;
+                case 'created_at':
+                    valA = new Date(a.created_at).getTime();
+                    valB = new Date(b.created_at).getTime();
+                    break;
+                default:
+                    return 0;
+            }
+
+            if (typeof valA === 'string' && typeof valB === 'string') {
+                return sortOrder === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            } else {
+                if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+                if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+                return 0;
+            }
+        });
+    }
+    return sortableSales;
+}, [filteredSales, sortColumn, sortOrder]);
+
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'In Progress':
@@ -77,6 +129,16 @@ const SalesList: React.FC = () => {
   const handleExportCSV = () => {
     exportSalesToCSV(filteredSales);
   };
+
+  const handleSort = (column: string) => {
+    if (sortColumn === column) {
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+        setSortColumn(column);
+        setSortOrder('asc');
+    }
+};
+
 
   return (
     <LoadingOverlay isLoading={isLoading} message="Loading sales data...">
@@ -210,35 +272,72 @@ const SalesList: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Sale ID
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Customer
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Seller
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total Amount
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Payment Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Sale Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
+    <tr>
+        <th
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+            onClick={() => handleSort('id')}
+        >
+            <div className="flex items-center">
+                Sale ID
+                {sortColumn === 'id' && (sortOrder === 'asc' ? <ArrowUp className="ml-1 h-3 w-3" /> : <ArrowDown className="ml-1 h-3 w-3" />)}
+            </div>
+        </th>
+        <th
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+            onClick={() => handleSort('customer_name')}
+        >
+            <div className="flex items-center">
+                Customer
+                {sortColumn === 'customer_name' && (sortOrder === 'asc' ? <ArrowUp className="ml-1 h-3 w-3" /> : <ArrowDown className="ml-1 h-3 w-3" />)}
+            </div>
+        </th>
+        <th
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+            onClick={() => handleSort('seller_name')}
+        >
+            <div className="flex items-center">
+                Seller
+                {sortColumn === 'seller_name' && (sortOrder === 'asc' ? <ArrowUp className="ml-1 h-3 w-3" /> : <ArrowDown className="ml-1 h-3 w-3" />)}
+            </div>
+        </th>
+        <th
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+            onClick={() => handleSort('total_amount')}
+        >
+            <div className="flex items-center">
+                Total Amount
+                {sortColumn === 'total_amount' && (sortOrder === 'asc' ? <ArrowUp className="ml-1 h-3 w-3" /> : <ArrowDown className="ml-1 h-3 w-3" />)}
+            </div>
+        </th>
+        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Payment Status
+        </th>
+        <th
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+            onClick={() => handleSort('status')}
+        >
+            <div className="flex items-center">
+                Status
+                {sortColumn === 'status' && (sortOrder === 'asc' ? <ArrowUp className="ml-1 h-3 w-3" /> : <ArrowDown className="ml-1 h-3 w-3" />)}
+            </div>
+        </th>
+        <th
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+            onClick={() => handleSort('created_at')}
+        >
+            <div className="flex items-center">
+                Sale Date
+                {sortColumn === 'created_at' && (sortOrder === 'asc' ? <ArrowUp className="ml-1 h-3 w-3" /> : <ArrowDown className="ml-1 h-3 w-3" />)}
+            </div>
+        </th>
+        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Actions
+        </th>
+    </tr>
+</thead>
+
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredSales.map((sale) => (
+              {sortedSales.map((sale) => (
                 <tr key={sale.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     #{sale.id}
