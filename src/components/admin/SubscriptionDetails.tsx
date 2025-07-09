@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useSettings } from '../../contexts/SettingsContext';
-import { CheckCircle, XCircle, Calendar, Info, Loader2, ExternalLink, CreditCard, Clock, AlertTriangle } from 'lucide-react';
+import { CheckCircle, XCircle, Calendar, Info, ExternalLink, CreditCard, Clock, AlertTriangle } from 'lucide-react';
+import LoadingOverlay from '../common/LoadingOverlay';
 
 const SubscriptionDetails: React.FC = () => {
   const { user } = useAuth();
@@ -26,18 +27,6 @@ const SubscriptionDetails: React.FC = () => {
       return true; // Assume expired if date parsing fails
     }
   };
-
-  if (isLoadingSettings) {
-    return (
-      <div className="min-h-[400px] flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-lg text-gray-600">Loading subscription details...</p>
-          <p className="text-sm text-gray-500 mt-1">Please wait while we fetch your account information</p>
-        </div>
-      </div>
-    );
-  }
 
   if (settingsLoadError) {
     return (
@@ -64,7 +53,8 @@ const SubscriptionDetails: React.FC = () => {
   const expired = isSubscriptionExpired(expirationDate || null);
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-8">
+    <LoadingOverlay isLoading={isLoadingSettings} message="Loading subscription details...">
+      <div className="p-6 max-w-7xl mx-auto space-y-8">
       {/* Header Section */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
         <div className="flex items-center space-x-4">
@@ -276,7 +266,8 @@ const SubscriptionDetails: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </LoadingOverlay>
   );
 };
 

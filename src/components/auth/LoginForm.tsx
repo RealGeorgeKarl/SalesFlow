@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { LogIn, AlertCircle } from 'lucide-react';
+import LoadingOverlay from '../common/LoadingOverlay';
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -21,7 +22,8 @@ const LoginForm: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="max-w-md w-full space-y-8">
+      <LoadingOverlay isLoading={isLoading} message="Signing in...">
+        <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="mx-auto h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center">
             <LogIn className="h-8 w-8 text-white" />
@@ -85,7 +87,8 @@ const LoginForm: React.FC = () => {
             {retryDelay > 0 ? `Please wait (${retryDelay}s)` : isLoading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
-      </div>
+        </div>
+      </LoadingOverlay>
     </div>
   );
 };

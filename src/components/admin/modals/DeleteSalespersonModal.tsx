@@ -47,10 +47,8 @@ const DeleteSalespersonModal: React.FC<DeleteSalespersonModalProps> = ({
       }
 
       setSuccess('Salesperson account deleted successfully!');
-      setTimeout(() => {
-        onSuccess();
-        handleClose();
-      }, 1500);
+      onSuccess();
+      handleClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete salesperson account');
     } finally {

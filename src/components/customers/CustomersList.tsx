@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Plus, User, Mail, Phone, Edit, Trash2, MapPin, Calendar, DollarSign, ShoppingCart, Loader2, AlertCircle, X } from 'lucide-react';
+import LoadingOverlay from '../common/LoadingOverlay';
 import { useCustomers } from '../../hooks/useCustomers';
 import { Customer, SocialMedia } from '../../types';
 import {formatCurrency} from "../../utils/formatters";
@@ -94,6 +95,7 @@ const CustomersList: React.FC = () => {
       }
 
       if (success) {
+        setSuccess('Customer saved successfully!');
         handleCloseForm();
       } else {
         setFormError('Operation failed. Please try again.');
@@ -128,21 +130,9 @@ const CustomersList: React.FC = () => {
     }));
   };
 
-  if (isLoading) {
-    return (
-      <div className="p-6 max-w-7xl mx-auto">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
-            <p className="text-lg text-gray-600">Loading customers...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <LoadingOverlay isLoading={isLoading} message="Loading customers...">
+      <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
@@ -473,7 +463,8 @@ const CustomersList: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </LoadingOverlay>
   );
 };
 

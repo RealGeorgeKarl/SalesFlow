@@ -49,9 +49,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSubmit, 
       const result = await onSubmit(formData);
       if (result) {
         setSuccess(`Product ${product ? 'updated' : 'created'} successfully!`);
-        setTimeout(() => {
-          handleClose();
-        }, 1500);
+        handleClose();
       } else {
         setError(`Failed to ${product ? 'update' : 'create'} product. Please try again.`);
       }

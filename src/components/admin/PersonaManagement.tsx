@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useSettings } from '../../contexts/SettingsContext';
-import { User, Shield, Plus, Edit, Trash2, Loader2, Key, Users, Crown } from 'lucide-react';
+import { User, Shield, Plus, Edit, Trash2, Key, Users, Crown } from 'lucide-react';
+import LoadingOverlay from '../common/LoadingOverlay';
 import AddSalespersonModal from './modals/AddSalespersonModal';
 import ChangeAdminPasswordModal from './modals/ChangeAdminPasswordModal';
 import ChangeSalespersonPasswordModal from './modals/ChangeSalespersonPasswordModal';
@@ -31,18 +32,6 @@ const PersonaManagement: React.FC = () => {
     }
   };
 
-  if (isLoadingSettings) {
-    return (
-      <div className="min-h-[400px] flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-lg text-gray-600">Loading personas...</p>
-          <p className="text-sm text-gray-500 mt-1">Please wait while we fetch your account data</p>
-        </div>
-      </div>
-    );
-  }
-
   if (settingsLoadError) {
     return (
       <div className="min-h-[400px] flex items-center justify-center">
@@ -67,7 +56,8 @@ const PersonaManagement: React.FC = () => {
   const adminPersonas = availablePersonas.filter(p => p.user_type === 'Admin');
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-8">
+    <LoadingOverlay isLoading={isLoadingSettings} message="Loading personas...">
+      <div className="p-6 max-w-7xl mx-auto space-y-8">
       {/* Header Section */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
         <div className="flex items-center justify-between">
@@ -295,7 +285,8 @@ const PersonaManagement: React.FC = () => {
         onSuccess={handleModalSuccess}
         salespersons={salespersonPersonas}
       />
-    </div>
+      </div>
+    </LoadingOverlay>
   );
 };
 

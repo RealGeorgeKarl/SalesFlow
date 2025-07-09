@@ -54,10 +54,8 @@ const ChangeSalespersonPasswordModal: React.FC<ChangeSalespersonPasswordModalPro
       }
 
       setSuccess('Salesperson password updated successfully!');
-      setTimeout(() => {
-        onSuccess();
-        handleClose();
-      }, 1500);
+      onSuccess();
+      handleClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update salesperson password');
     } finally {

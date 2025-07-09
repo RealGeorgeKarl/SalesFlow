@@ -88,10 +88,8 @@ const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({ isOpen, onClose
       }
 
       setSuccess('Payment recorded successfully!');
-      setTimeout(() => {
-        onSuccess();
-        handleClose();
-      }, 1500);
+      onSuccess();
+      handleClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to record payment');
     } finally {

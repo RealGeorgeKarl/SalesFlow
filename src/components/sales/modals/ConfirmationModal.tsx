@@ -55,9 +55,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       const result = await onConfirm(notes.trim() || undefined);
       if (result) {
         setSuccess('Action completed successfully!');
-        setTimeout(() => {
-          handleClose();
-        }, 1500);
+        handleClose();
       } else {
         setError('Action failed. Please try again.');
       }

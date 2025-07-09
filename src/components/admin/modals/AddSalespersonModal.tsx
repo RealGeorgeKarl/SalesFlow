@@ -48,10 +48,8 @@ const AddSalespersonModal: React.FC<AddSalespersonModalProps> = ({ isOpen, onClo
       }
 
       setSuccess('Salesperson account created successfully!');
-      setTimeout(() => {
-        onSuccess();
-        handleClose();
-      }, 1500);
+      onSuccess();
+      handleClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create salesperson account');
     } finally {

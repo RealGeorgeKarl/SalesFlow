@@ -36,9 +36,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose, onSubmit
       const result = await onSubmit(name.trim());
       if (result) {
         setSuccess(`Category ${category ? 'updated' : 'created'} successfully!`);
-        setTimeout(() => {
-          handleClose();
-        }, 1500);
+        handleClose();
       } else {
         setError(`Failed to ${category ? 'update' : 'create'} category. Please try again.`);
       }

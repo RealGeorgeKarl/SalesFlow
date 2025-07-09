@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, User, ShoppingCart, CreditCard, FileText } from 'lucide-react';
+import LoadingOverlay from '../common/LoadingOverlay';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { useSaleData } from '../../hooks/useSaleData';
@@ -278,19 +279,6 @@ const NewSale: React.FC = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="p-6 max-w-4xl mx-auto">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-lg text-gray-600">Loading sale data...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="p-6 max-w-4xl mx-auto">
@@ -314,7 +302,8 @@ const NewSale: React.FC = () => {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <LoadingOverlay isLoading={isLoading} message="Loading sale data...">
+      <div className="p-6 max-w-4xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">New Sale</h1>
         <p className="text-gray-600">Create a new sale with flexible payment options</p>
@@ -387,7 +376,8 @@ const NewSale: React.FC = () => {
         isLoading={isCompletingSale}
         saleData={resultType === 'success' ? currentCompletedSaleData : undefined}
       />
-    </div>
+      </div>
+    </LoadingOverlay>
   );
 };
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Filter, Eye, Plus, Calendar, DollarSign, Loader2, AlertCircle } from 'lucide-react';
+import LoadingOverlay from '../common/LoadingOverlay';
 import { useSales } from '../../hooks/useSales';
 import SaleDetailsModal from './modals/SaleDetailsModal';
 import { Sale } from '../../types';
@@ -52,21 +53,9 @@ const SalesList: React.FC = () => {
     setSelectedSale(null);
   };
 
-  if (isLoading) {
-    return (
-      <div className="p-6 max-w-7xl mx-auto">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
-            <p className="text-lg text-gray-600">Loading sales data...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <LoadingOverlay isLoading={isLoading} message="Loading sales data...">
+      <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         {/* Summary Cards */}
@@ -270,7 +259,8 @@ const SalesList: React.FC = () => {
         sale={selectedSale}
         onRefresh={fetchSales}
       />
-    </div>
+      </div>
+    </LoadingOverlay>
   );
 };
 

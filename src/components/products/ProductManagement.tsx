@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Package, Plus, Edit, Trash2, Loader2, AlertCircle, Search, DollarSign, Hash } from 'lucide-react';
+import LoadingOverlay from '../common/LoadingOverlay';
 import { useProducts } from '../../hooks/useProducts';
 import { Category, Product } from '../../types';
 import CategoryModal from './modals/CategoryModal';
@@ -102,21 +103,9 @@ const ProductManagement: React.FC = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="p-6 max-w-7xl mx-auto">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
-            <p className="text-lg text-gray-600">Loading products and categories...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-8">
+    <LoadingOverlay isLoading={isLoading} message="Loading products and categories...">
+      <div className="p-6 max-w-7xl mx-auto space-y-8">
       {/* Header Section */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
         <div className="flex items-center justify-between">
@@ -386,7 +375,8 @@ const ProductManagement: React.FC = () => {
         itemType={deleteTarget?.type || 'category'}
         itemName={deleteTarget?.item.name || ''}
       />
-    </div>
+      </div>
+    </LoadingOverlay>
   );
 };
 

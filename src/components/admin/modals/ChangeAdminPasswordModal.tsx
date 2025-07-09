@@ -53,10 +53,8 @@ const ChangeAdminPasswordModal: React.FC<ChangeAdminPasswordModalProps> = ({ isO
       }
 
       setSuccess('Admin password updated successfully!');
-      setTimeout(() => {
-        onSuccess();
-        handleClose();
-      }, 1500);
+      onSuccess();
+      handleClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update admin password');
     } finally {

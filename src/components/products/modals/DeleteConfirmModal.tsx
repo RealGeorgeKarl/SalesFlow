@@ -36,9 +36,7 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
       const result = await onConfirm();
       if (result) {
         setSuccess(`${itemType.charAt(0).toUpperCase() + itemType.slice(1)} deleted successfully!`);
-        setTimeout(() => {
-          handleClose();
-        }, 1500);
+        handleClose();
       } else {
         setError(`Failed to delete ${itemType}. Please try again.`);
       }
