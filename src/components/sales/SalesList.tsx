@@ -77,7 +77,7 @@ const SalesList: React.FC = () => {
             <div className="ml-4">
               <p className="text-sm text-gray-600">Total Sales</p>
               <p className="text-2xl font-semibold text-gray-900">
-                ${sales.reduce((sum, sale) => sum + sale.total_amount, 0).toFixed(2)}
+                {formatCurrency(sales.reduce((sum, sale) => sum + sale.total_amount, 0))}
               </p>
             </div>
           </div>
@@ -99,7 +99,7 @@ const SalesList: React.FC = () => {
             <div className="ml-4">
               <p className="text-sm text-gray-600">Pending Balance</p>
               <p className="text-2xl font-semibold text-gray-900">
-                ${sales.reduce((sum, sale) => sum + sale.remaining_balance, 0).toFixed(2)}
+                {formatCurrency(sales.reduce((sum, sale) => sum + sale.remaining_balance, 0))}
               </p>
             </div>
           </div>
@@ -227,16 +227,16 @@ const SalesList: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">
-                      ${sale.total_amount.toFixed(2)}
+                      {formatCurrency(sale.total_amount)}
                     </div>
                     <div className="text-sm text-gray-500">{sale.payment_type}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">
-                      ${sale.amount_paid.toFixed(2)} paid
+                      {formatCurrencysale.amount_paid)} paid
                     </div>
                     <div className="text-sm text-gray-500">
-                      ${sale.remaining_balance.toFixed(2)} remaining
+                      {formatCurrency(sale.remaining_balance)} remaining
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
