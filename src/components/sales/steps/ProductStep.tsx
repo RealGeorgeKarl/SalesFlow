@@ -169,7 +169,7 @@ const ProductStep: React.FC<ProductStepProps> = ({ cart, onCartUpdate, products 
                       </div>
                       <div className="flex items-center space-x-2">
                         <span className="font-medium text-gray-900">
-                          ${item.total.toFixed(2)}
+                          {formatCurrency(item.total)}
                         </span>
                         <button
                           onClick={() => removeFromCart(item.product.id)}
