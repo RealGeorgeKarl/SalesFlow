@@ -5,6 +5,8 @@ import { Category, Product } from '../../types';
 import CategoryModal from './modals/CategoryModal';
 import ProductModal from './modals/ProductModal';
 import DeleteConfirmModal from './modals/DeleteConfirmModal';
+import {formatCurreny} from "../../formatters";
+
 
 const ProductManagement: React.FC = () => {
   const {
@@ -320,7 +322,7 @@ const ProductManagement: React.FC = () => {
                         <div className="flex items-center space-x-2">
                           <DollarSign className="h-4 w-4 text-gray-400" />
                           <span className="text-lg font-bold text-gray-900">
-                            ${product.price.toFixed(2)}
+                            {formatCurrency(product.price)}
                           </span>
                         </div>
                         <div className="flex items-center space-x-2">
