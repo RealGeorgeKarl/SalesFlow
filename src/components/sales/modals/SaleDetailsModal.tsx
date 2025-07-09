@@ -7,6 +7,8 @@ import ConfirmationModal from './ConfirmationModal';
 import { supabase } from '../../../lib/supabase';
 import { RpcResult } from '../../../types';
 import { useRef, useState } from 'react';
+import { formatCurrency} from "../../../utils/formatters";
+
 
 interface SaleDetailsModalProps {
   isOpen: boolean;
@@ -187,7 +189,7 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sa
                 <DollarSign className="h-6 w-6 text-blue-600" />
                 <h3 className="text-lg font-semibold text-blue-900">Total Amount</h3>
               </div>
-              <p className="text-3xl font-bold text-blue-900">${sale.total_amount.toFixed(2)}</p>
+              <p className="text-3xl font-bold text-blue-900">${sale.total_amount}</p>
               <p className="text-sm text-blue-700 mt-1">{sale.payment_type}</p>
             </div>
 
