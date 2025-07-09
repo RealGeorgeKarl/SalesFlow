@@ -2,6 +2,8 @@ import React from 'react';
 import { CheckCircle, User, ShoppingCart, CreditCard, FileText, Loader2 } from 'lucide-react';
 import { NewSaleData } from '../NewSale';
 import { useAuth } from '../../../contexts/AuthContext';
+import {formatCurrency} from "../../../utils/formattters";
+
 
 interface ConfirmationStepProps {
   saleData: NewSaleData;
@@ -93,7 +95,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ saleData, onComplet
                 <div>
                   <p className="text-sm font-medium text-gray-900">{item.product.name}</p>
                   <p className="text-xs text-gray-500">
-                    ${item.product.price.toFixed(2)} × {item.quantity}
+                    {item.product.price.toFixed(2)} × {item.quantity}
                   </p>
                 </div>
                 <span className="text-sm font-medium text-gray-900">
