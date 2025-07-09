@@ -164,7 +164,7 @@ const ProductStep: React.FC<ProductStepProps> = ({ cart, onCartUpdate, products 
                       <div className="flex-1">
                         <h4 className="font-medium text-gray-900">{item.product.name}</h4>
                         <p className="text-sm text-gray-500">
-                          {item.product.price.toFixed(2)} × {item.quantity}
+                          {formatCurrency(item.product.price)} × {item.quantity}
                         </p>
                       </div>
                       <div className="flex items-center space-x-2">
