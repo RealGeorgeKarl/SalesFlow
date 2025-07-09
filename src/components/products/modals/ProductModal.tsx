@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Package, Loader2, AlertCircle, CheckCircle, DollarSign, Hash } from 'lucide-react';
 import { Product } from '../../../types';
-import {formatCurrency} from "../utils/formatters";
+import {formatCurrency} from "utils/formatters";
 
 
 interface ProductModalProps {
