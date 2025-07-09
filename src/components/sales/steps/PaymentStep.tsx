@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { CreditCard, Calendar, DollarSign, Calculator, Clock, Percent, Hash, Receipt } from 'lucide-react';
 import { NewSaleData } from '../NewSale';
 import { InstallmentPlan, FrequencyUnit, PaymentMethodType, PaymentMethod } from '../../../types';
+import {formatCurrency} from "../../../utils/formatters";
+
 
 interface PaymentSchedule {
   installment_number: number;
@@ -386,7 +388,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
                 />
               </div>
               <p className="text-sm text-gray-500 mt-1">
-                Maximum: ${saleData.totalAmount.toFixed(2)}
+                Maximum: {formatCurrency(saleData.totalAmount)}
               </p>
             </div>
             
@@ -463,7 +465,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
                 Payment every {customFrequencyInterval} {customFrequencyUnit}
                 {customFrequencyInterval > 1 ? 's' : ''} 
                 {saleData.customStartDate && ` starting from ${new Date(saleData.customStartDate).toLocaleDateString()}`}
-                {customDownPaymentAmount > 0 && ` (with $${customDownPaymentAmount.toFixed(2)} down payment)`}
+                {customDownPaymentAmount > 0 && ` (with ${formatCurrency(customDownPaymentAmount)} down payment)`}
               </p>
             </div>
           </div>
@@ -483,21 +485,21 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
                 <div className="text-center">
                   <p className="text-sm text-gray-500">Original Amount</p>
                   <p className="text-lg font-semibold text-gray-900">
-                    ${saleData.totalAmount.toFixed(2)}
+                    {formatCurrency(saleData.totalAmount)}
                   </p>
                 </div>
                 {customDownPaymentAmount > 0 && (
                   <div className="text-center">
                     <p className="text-sm text-gray-500">Down Payment</p>
                     <p className="text-lg font-semibold text-green-600">
-                      ${customDownPaymentAmount.toFixed(2)}
+                      {formatCurrency(customDownPaymentAmount)}
                     </p>
                   </div>
                 )}
                 <div className="text-center">
                   <p className="text-sm text-gray-500">Total with Interest</p>
                   <p className="text-lg font-semibold text-gray-900">
-                    ${getTotalWithInterest().toFixed(2)}
+                    {formatCurrency(getTotalWithInterest())}
                   </p>
                 </div>
               </div>
@@ -512,7 +514,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ saleData, onUpdate }) => {
                     </span>
                     <div className="text-right">
                       <p className="text-sm font-medium text-gray-900">
-                        ${installment.amount.toFixed(2)}
+                        {formatCurrency(installment.amount)}
                       </p>
                       <p className="text-xs text-gray-500">
                         Due: {installment.due_date}
