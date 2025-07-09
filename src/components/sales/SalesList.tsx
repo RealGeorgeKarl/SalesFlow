@@ -4,6 +4,8 @@ import { Search, Filter, Eye, Plus, Calendar, DollarSign, Loader2, AlertCircle }
 import { useSales } from '../../hooks/useSales';
 import SaleDetailsModal from './modals/SaleDetailsModal';
 import { Sale } from '../../types';
+import {formatCurrency} from "../../utils/formatters";
+
 
 const SalesList: React.FC = () => {
   const { sales, isLoading, error, fetchSales } = useSales();
