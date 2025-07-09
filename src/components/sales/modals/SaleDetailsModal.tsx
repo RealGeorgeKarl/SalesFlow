@@ -465,8 +465,8 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sa
             </button>
           </div>
         </div>
+        </div>
       </div>
-    </div>
 
       {/* Record Payment Modal */}
       <RecordPaymentModal
