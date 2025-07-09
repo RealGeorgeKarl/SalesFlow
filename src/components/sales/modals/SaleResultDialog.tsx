@@ -328,7 +328,7 @@ const SaleResultDialog: React.FC<SaleResultDialogProps> = ({
                         </p>
                       </div>
                       <span className="text-sm font-medium text-gray-900">
-                        ${item.total.toFixed(2)}
+                        {formatCurrency(item.total)}
                       </span>
                     </div>
                   ))}
@@ -336,7 +336,7 @@ const SaleResultDialog: React.FC<SaleResultDialogProps> = ({
                     <div className="flex justify-between items-center">
                       <span className="text-base font-semibold text-gray-900">Total Amount:</span>
                       <span className="text-lg font-bold text-gray-900">
-                        ${saleData.totalAmount.toFixed(2)}
+                        {formatCurrency(saleData.totalAmount)}
                       </span>
                     </div>
                   </div>
@@ -366,7 +366,7 @@ const SaleResultDialog: React.FC<SaleResultDialogProps> = ({
                   </p>
                   {saleData.paymentType === 'Custom Installment' && saleData.customDownPaymentAmount && saleData.customDownPaymentAmount > 0 && (
                     <p className="text-sm">
-                      <span className="font-medium">Down Payment:</span> ${saleData.customDownPaymentAmount.toFixed(2)}
+                      <span className="font-medium">Down Payment:</span> {formatCurrency(saleData.customDownPaymentAmount)}
                     </p>
                   )}
                   {saleData.paymentType === 'Custom Installment' && (
