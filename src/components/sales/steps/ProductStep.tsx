@@ -101,7 +101,7 @@ const ProductStep: React.FC<ProductStepProps> = ({ cart, onCartUpdate, products 
                       <p className="text-sm text-gray-500">{product.description}</p>
                       <div className="flex items-center space-x-2 mt-1">
                         <span className="text-lg font-semibold text-gray-900">
-                          ${product.price.toFixed(2)}
+                          {formatCurrency(product.price)}
                         </span>
                         <span className="text-sm text-gray-500">
                           (Stock: {product.quantity})
