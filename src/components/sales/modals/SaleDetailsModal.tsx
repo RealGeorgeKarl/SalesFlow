@@ -395,7 +395,7 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sa
                         {schedule.status}
                       </span>
                       <p className="text-lg font-bold text-gray-900">
-                        {formatCurrency(schedule.amount_due}
+                        {formatCurrency(schedule.amount_due)}
                       </p>
                     </div>
                   </div>
