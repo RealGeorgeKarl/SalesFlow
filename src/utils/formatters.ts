@@ -5,7 +5,7 @@
  * @param {number} number - The number to format.
  * @returns {string} The formatted number string, or an empty string for invalid input.
  */
-export const formatCurrencyWithoutSign = (number) => {
+export const formatCurrency = (number) => {
   // Check if the input is a valid number
   if (typeof number !== 'number' || isNaN(number)) {
     return "";
