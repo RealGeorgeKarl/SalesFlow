@@ -62,7 +62,7 @@ const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({ isOpen, onClose
     }
 
     if (paymentAmount > sale.remaining_balance) {
-      setError(`Payment amount cannot exceed remaining balance of $${sale.remaining_balance.toFixed(2)}`);
+      setError(`Payment amount cannot exceed remaining balance of ${formatCurrency(sale.remaining_balance)}`);
       return;
     }
 
@@ -207,7 +207,7 @@ const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({ isOpen, onClose
                     />
                   </div>
                   <p className="text-sm text-gray-500 mt-1">
-                    Maximum: ${sale.remaining_balance.toFixed(2)}
+                    Maximum: {formatCurrency(sale.remaining_balance)}
                   </p>
                 </div>
 
