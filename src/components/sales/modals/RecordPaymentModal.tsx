@@ -189,7 +189,6 @@ const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({ isOpen, onClose
                     <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <input
                       type="number"
-                      step="0.01"
                       min="0.01"
                       max={sale.remaining_balance}
                       value={amount}
