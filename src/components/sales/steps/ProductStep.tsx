@@ -186,7 +186,7 @@ const ProductStep: React.FC<ProductStepProps> = ({ cart, onCartUpdate, products 
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-semibold text-gray-900">Total Amount:</span>
                     <span className="text-xl font-bold text-gray-900">
-                      ${getTotalAmount().toFixed(2)}
+                      {formatCurrency(getTotalAmount())}
                     </span>
                   </div>
                 </div>
