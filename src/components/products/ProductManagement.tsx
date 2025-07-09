@@ -5,7 +5,7 @@ import { Category, Product } from '../../types';
 import CategoryModal from './modals/CategoryModal';
 import ProductModal from './modals/ProductModal';
 import DeleteConfirmModal from './modals/DeleteConfirmModal';
-import {formatCurrency} from "../../../formatters";
+import {formatCurrency} from "../../../../formatters";
 
 
 const ProductManagement: React.FC = () => {
