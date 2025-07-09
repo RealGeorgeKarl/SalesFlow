@@ -27,14 +27,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   const { persona, logout, clearSelectedPersona } = useAuth();
   const navigate = useNavigate();
 
+  {/*{ name: 'Installment Plans', href: '/installment-plans', icon: Calendar, roles: ['Admin'] },
+    { name: 'Audit Logs', href: '/audit-logs', icon: Shield, roles: ['Admin'] },*/}
   const navigationItems = [
     { name: 'Dashboard', href: '/dashboard', icon: BarChart3, roles: ['Admin', 'Salesperson'] },
     { name: 'New Sale', href: '/new-sale', icon: ShoppingCart, roles: ['Admin', 'Salesperson'] },
     { name: 'Sales', href: '/sales', icon: FileText, roles: ['Admin', 'Salesperson'] },
     { name: 'Customers', href: '/customers', icon: Users, roles: ['Admin', 'Salesperson'] },
     { name: 'Products', href: '/products', icon: Package, roles: ['Admin'] },
-    { name: 'Installment Plans', href: '/installment-plans', icon: Calendar, roles: ['Admin'] },
-    { name: 'Audit Logs', href: '/audit-logs', icon: Shield, roles: ['Admin'] },
     { name: 'Persona Management', href: '/persona-management', icon: Key, roles: ['Admin'] },
     { name: 'Subscription', href: '/subscription', icon: CreditCard, roles: ['Admin'] },
   ];
