@@ -3,6 +3,8 @@ import { X, CheckCircle, AlertCircle, Loader2, Printer, Download, User, Shopping
 import html2canvas from 'html2canvas';
 import { NewSaleData } from '../NewSale';
 import { useAuth } from '../../../contexts/AuthContext';
+import {formatCurrency} from "../../../utils/formatters";
+
 
 interface SaleResultDialogProps {
   isOpen: boolean;
@@ -322,7 +324,7 @@ const SaleResultDialog: React.FC<SaleResultDialogProps> = ({
                       <div>
                         <p className="text-sm font-medium text-gray-900">{item.product.name}</p>
                         <p className="text-xs text-gray-500">
-                          ${item.product.price.toFixed(2)} × {item.quantity}
+                          {formatCurrency(item.product.price)} × {item.quantity}
                         </p>
                       </div>
                       <span className="text-sm font-medium text-gray-900">
