@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Search, Plus, Minus, Package, ShoppingCart } from 'lucide-react';
 import { Product, CartItem } from '../../../types';
+import {formatCurrency} from "../../../utils/formatters";
+
 
 interface ProductStepProps {
   cart: CartItem[];
@@ -162,7 +164,7 @@ const ProductStep: React.FC<ProductStepProps> = ({ cart, onCartUpdate, products 
                       <div className="flex-1">
                         <h4 className="font-medium text-gray-900">{item.product.name}</h4>
                         <p className="text-sm text-gray-500">
-                          ${item.product.price.toFixed(2)} × {item.quantity}
+                          {item.product.price.toFixed(2)} × {item.quantity}
                         </p>
                       </div>
                       <div className="flex items-center space-x-2">
