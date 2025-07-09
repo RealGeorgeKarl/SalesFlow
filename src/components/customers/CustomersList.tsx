@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Plus, User, Mail, Phone, Edit, Trash2, MapPin, Calendar, DollarSign, ShoppingCart, Loader2, AlertCircle, X } from 'lucide-react';
+import { Search, Plus, User, Mail, Phone, Edit, Trash2, MapPin, Calendar, DollarSign, ShoppingCart, Loader2, AlertCircle, X, CheckCircle } from 'lucide-react';
 import LoadingOverlay from '../common/LoadingOverlay';
 import { useCustomers } from '../../hooks/useCustomers';
 import { Customer, SocialMedia } from '../../types';
@@ -13,6 +13,7 @@ const CustomersList: React.FC = () => {
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState('');
+  const [formSuccess, setFormSuccess] = useState('');
 
   // Form state
   const [formData, setFormData] = useState({
@@ -78,6 +79,7 @@ const CustomersList: React.FC = () => {
     setShowForm(false);
     setEditingCustomer(null);
     setFormError('');
+    setFormSuccess('');
     setFormLoading(false);
   };
 
@@ -85,6 +87,7 @@ const CustomersList: React.FC = () => {
     e.preventDefault();
     setFormLoading(true);
     setFormError('');
+    setFormSuccess('');
 
     try {
       let success = false;
@@ -95,7 +98,7 @@ const CustomersList: React.FC = () => {
       }
 
       if (success) {
-        setSuccess('Customer saved successfully!');
+        setFormSuccess('Customer saved successfully!');
         handleCloseForm();
       } else {
         setFormError('Operation failed. Please try again.');
@@ -264,6 +267,13 @@ const CustomersList: React.FC = () => {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900">
                 {editingCustomer ? 'Edit Customer' : 'Add New Customer'}
+            {formSuccess && (
+              <div className="flex items-center space-x-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <CheckCircle className="h-5 w-5 text-green-600" />
+                <span className="text-sm text-green-700">{formSuccess}</span>
+              </div>
+            )}
+
               </h2>
               <button
                 onClick={handleCloseForm}
