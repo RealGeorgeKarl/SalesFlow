@@ -266,6 +266,7 @@ const SalesList: React.FC = () => {
         isOpen={showDetailsModal}
         onClose={handleCloseDetailsModal}
         sale={selectedSale}
+        onRefresh={fetchSales}
       />
     </div>
   );

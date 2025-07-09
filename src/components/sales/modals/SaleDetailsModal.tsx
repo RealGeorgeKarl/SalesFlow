@@ -1,14 +1,26 @@
 import React from 'react';
-import { X, User, ShoppingCart, CreditCard, Calendar, DollarSign, Package, Clock, Receipt, CheckCircle, AlertCircle } from 'lucide-react';
+import { X, User, ShoppingCart, CreditCard, Calendar, DollarSign, Package, Clock, Receipt, CheckCircle, AlertCircle, Printer, Download, XCircle, Ban } from 'lucide-react';
 import { Sale } from '../../../types';
+import { printElement, generateImageFromElement } from '../../../utils/receiptUtils';
+import RecordPaymentModal from './RecordPaymentModal';
+import ConfirmationModal from './ConfirmationModal';
+import { supabase } from '../../../lib/supabase';
+import { RpcResult } from '../../../types';
+import { useRef, useState } from 'react';
 
 interface SaleDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   sale: Sale | null;
+  onRefresh: () => void;
 }
 
-const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sale }) => {
+const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sale, onRefresh }) => {
+  const receiptContentRef = useRef<HTMLDivElement>(null);
+  const [showRecordPayment, setShowRecordPayment] = useState(false);
+  const [showTerminateConfirm, setShowTerminateConfirm] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+
   if (!isOpen || !sale) return null;
 
   const getStatusColor = (status: string) => {
@@ -67,9 +79,84 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sa
     }
   };
 
+  const handleRecordPayment = () => {
+    setShowRecordPayment(true);
+  };
+
+  const handleTerminateSale = async (notes?: string) => {
+    if (!sale) return false;
+
+    try {
+      const { data, error } = await supabase.rpc('terminate_sale', {
+        p_sale_id: sale.id,
+        p_termination_notes: notes || null,
+      });
+
+      if (error) throw error;
+
+      const result: RpcResult = data[0];
+      if (!result.success) {
+        throw new Error(result.message);
+      }
+
+      onRefresh();
+      return true;
+    } catch (err) {
+      console.error('Failed to terminate sale:', err);
+      return false;
+    }
+  };
+
+  const handleCancelSale = async (notes?: string) => {
+    if (!sale) return false;
+
+    try {
+      const { data, error } = await supabase.rpc('cancel_sale', {
+        p_sale_id: sale.id,
+        p_cancellation_notes: notes || null,
+      });
+
+      if (error) throw error;
+
+      const result: RpcResult = data[0];
+      if (!result.success) {
+        throw new Error(result.message);
+      }
+
+      onRefresh();
+      return true;
+    } catch (err) {
+      console.error('Failed to cancel sale:', err);
+      return false;
+    }
+  };
+
+  const handlePrintReceipt = () => {
+    if (receiptContentRef.current) {
+      printElement(receiptContentRef.current, `Sale Receipt #${sale.id}`);
+    }
+  };
+
+  const handleGenerateImage = () => {
+    if (receiptContentRef.current) {
+      generateImageFromElement(receiptContentRef.current, `sale-receipt-${sale.id}`);
+    }
+  };
+
+  const handlePaymentSuccess = () => {
+    setShowRecordPayment(false);
+    onRefresh();
+  };
+
+  const canRecordPayment = sale.status === 'In Progress' && sale.remaining_balance > 0;
+  const canTerminate = sale.status === 'In Progress';
+  const canCancel = sale.status === 'In Progress' && (!sale.payment_history || sale.payment_history.length === 0);
+  const isCompleted = sale.status === 'Completed';
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+    <>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-2xl">
           <div className="flex items-center justify-between">
@@ -92,9 +179,9 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sa
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-8">
+        <div ref={receiptContentRef} className="p-6 space-y-6">
           {/* Sale Overview */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
               <div className="flex items-center space-x-3 mb-3">
                 <DollarSign className="h-6 w-6 text-blue-600" />
@@ -317,18 +404,107 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sa
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-white border-t border-gray-200 p-6 rounded-b-2xl">
-          <div className="flex justify-end">
+        <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4 rounded-b-2xl">
+          <div className="flex flex-wrap justify-between items-center gap-3">
+            <div className="flex flex-wrap gap-2">
+              {canRecordPayment && (
+                <button
+                  onClick={handleRecordPayment}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center text-sm font-medium"
+                >
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  Record Payment
+                </button>
+              )}
+              
+              {canTerminate && (
+                <button
+                  onClick={() => setShowTerminateConfirm(true)}
+                  className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors flex items-center text-sm font-medium"
+                >
+                  <XCircle className="h-4 w-4 mr-2" />
+                  Terminate Sale
+                </button>
+              )}
+              
+              {canCancel && (
+                <button
+                  onClick={() => setShowCancelConfirm(true)}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center text-sm font-medium"
+                >
+                  <Ban className="h-4 w-4 mr-2" />
+                  Cancel Sale
+                </button>
+              )}
+              
+              {isCompleted && (
+                <>
+                  <button
+                    onClick={handlePrintReceipt}
+                    className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors flex items-center text-sm font-medium"
+                  >
+                    <Printer className="h-4 w-4 mr-2" />
+                    Print Receipt
+                  </button>
+                  <button
+                    onClick={handleGenerateImage}
+                    className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors flex items-center text-sm font-medium"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Generate Image
+                  </button>
+                </>
+              )}
+            </div>
+            
             <button
               onClick={onClose}
-              className="px-6 py-3 bg-gray-600 text-white rounded-xl hover:bg-gray-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
+              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
             >
               Close
             </button>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Record Payment Modal */}
+      <RecordPaymentModal
+        isOpen={showRecordPayment}
+        onClose={() => setShowRecordPayment(false)}
+        onSuccess={handlePaymentSuccess}
+        sale={sale}
+      />
+
+      {/* Terminate Sale Confirmation */}
+      <ConfirmationModal
+        isOpen={showTerminateConfirm}
+        onClose={() => setShowTerminateConfirm(false)}
+        onConfirm={handleTerminateSale}
+        title="Terminate Sale"
+        message="This action will terminate the sale and stop all future payments. This action cannot be undone."
+        confirmationText="TERMINATE"
+        confirmButtonText="Terminate Sale"
+        confirmButtonColor="yellow"
+        requireNotes={true}
+        notesLabel="Termination Notes"
+        notesPlaceholder="Please provide a reason for terminating this sale..."
+      />
+
+      {/* Cancel Sale Confirmation */}
+      <ConfirmationModal
+        isOpen={showCancelConfirm}
+        onClose={() => setShowCancelConfirm(false)}
+        onConfirm={handleCancelSale}
+        title="Cancel Sale"
+        message="This action will cancel the sale completely. This action cannot be undone."
+        confirmationText="CANCEL"
+        confirmButtonText="Cancel Sale"
+        confirmButtonColor="red"
+        requireNotes={true}
+        notesLabel="Cancellation Notes"
+        notesPlaceholder="Please provide a reason for canceling this sale..."
+      />
+    </>
   );
 };
 
