@@ -25,7 +25,27 @@ const SalesList: React.FC = () => {
     
     const matchesStatus = statusFilter === 'all' || sale.status.toLowerCase() === statusFilter;
     
-    return matchesSearch && matchesStatus;
+    // Date filtering
+    let matchesDateRange = true;
+    if (dateRange.start || dateRange.end) {
+      const saleDate = new Date(sale.created_at);
+      const startDate = dateRange.start ? new Date(dateRange.start) : null;
+      const endDate = dateRange.end ? new Date(dateRange.end) : null;
+      
+      // Set end date to end of day for inclusive filtering
+      if (endDate) {
+        endDate.setHours(23, 59, 59, 999);
+      }
+      
+      if (startDate && saleDate < startDate) {
+        matchesDateRange = false;
+      }
+      if (endDate && saleDate > endDate) {
+        matchesDateRange = false;
+      }
+    }
+    
+    return matchesSearch && matchesStatus && matchesDateRange;
   });
 
   const getStatusColor = (status: string) => {
