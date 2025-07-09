@@ -2,6 +2,8 @@ import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import KPICard from './KPICard';
+import { useDashboardData } from '../../hooks/useDashboardData';
+import { formatCurrency } from '../../utils/formatters';
 import {
   DollarSign,
   ShoppingCart,
@@ -11,88 +13,87 @@ import {
   Calendar,
   TrendingUp,
   Clock,
+  Loader2,
+  AlertCircle,
 } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
   const { persona } = useAuth();
+  const { data, isLoading, error, fetchDashboardData } = useDashboardData();
 
-  // Mock data - replace with actual API calls
+  if (isLoading) {
+    return (
+      <div className="p-6 max-w-7xl mx-auto">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+            <p className="text-lg text-gray-600">Loading dashboard data...</p>
+            <p className="text-sm text-gray-500 mt-1">Please wait while we fetch your latest information</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 max-w-7xl mx-auto">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center max-w-md">
+            <div className="p-4 bg-red-50 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <AlertCircle className="h-8 w-8 text-red-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Failed to Load Dashboard</h3>
+            <p className="text-red-600 mb-4">{error}</p>
+            <button
+              onClick={fetchDashboardData}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="p-6 max-w-7xl mx-auto">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <p className="text-lg text-gray-600">No dashboard data available</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Create KPI data from fetched data
   const kpiData = [
     {
       title: "Today's Sales",
-      value: '$12,450',
+      value: formatCurrency(data.kpis.today_sales),
       icon: DollarSign,
-      trend: { value: 12.5, isPositive: true },
       color: 'green' as const,
     },
     {
       title: 'Active Sales',
-      value: '47',
+      value: data.kpis.active_sales_count.toString(),
       icon: ShoppingCart,
-      trend: { value: 8.2, isPositive: true },
       color: 'blue' as const,
     },
     {
       title: 'Total Customers',
-      value: '1,234',
+      value: data.kpis.total_customers_count.toString(),
       icon: Users,
-      trend: { value: 3.1, isPositive: true },
       color: 'blue' as const,
     },
     {
       title: 'Overdue Payments',
-      value: '8',
+      value: data.kpis.overdue_payments_count.toString(),
       icon: AlertTriangle,
-      trend: { value: 15.3, isPositive: false },
       color: 'red' as const,
-    },
-  ];
-
-  const upcomingPayments = [
-    {
-      id: '1',
-      customer: 'John Smith',
-      amount: '$450',
-      dueDate: '2024-01-15',
-      status: 'Due Today',
-    },
-    {
-      id: '2',
-      customer: 'Sarah Johnson',
-      amount: '$750',
-      dueDate: '2024-01-16',
-      status: 'Due Tomorrow',
-    },
-    {
-      id: '3',
-      customer: 'Mike Wilson',
-      amount: '$320',
-      dueDate: '2024-01-17',
-      status: 'Due in 2 days',
-    },
-  ];
-
-  const recentSales = [
-    {
-      id: '1',
-      customer: 'Alice Brown',
-      amount: '$1,200',
-      status: 'Completed',
-      date: '2024-01-14',
-    },
-    {
-      id: '2',
-      customer: 'Bob Davis',
-      amount: '$850',
-      status: 'Active',
-      date: '2024-01-14',
-    },
-    {
-      id: '3',
-      customer: 'Carol Miller',
-      amount: '$2,100',
-      status: 'Active',
-      date: '2024-01-13',
     },
   ];
 
@@ -114,7 +115,6 @@ const Dashboard: React.FC = () => {
             title={kpi.title}
             value={kpi.value}
             icon={kpi.icon}
-            trend={kpi.trend}
             color={kpi.color}
           />
         ))}
@@ -150,21 +150,27 @@ const Dashboard: React.FC = () => {
                 <TrendingUp className="h-5 w-5 text-green-600" />
                 <span className="text-sm text-gray-600">Monthly Revenue</span>
               </div>
-              <span className="text-sm font-medium text-gray-900">$45,678</span>
+              <span className="text-sm font-medium text-gray-900">
+                {formatCurrency(data.performance.monthly_revenue)}
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Calendar className="h-5 w-5 text-blue-600" />
                 <span className="text-sm text-gray-600">Sales This Month</span>
               </div>
-              <span className="text-sm font-medium text-gray-900">89</span>
+              <span className="text-sm font-medium text-gray-900">
+                {data.performance.sales_this_month_count}
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Clock className="h-5 w-5 text-yellow-600" />
                 <span className="text-sm text-gray-600">Avg. Sale Time</span>
               </div>
-              <span className="text-sm font-medium text-gray-900">2.5 days</span>
+              <span className="text-sm font-medium text-gray-900">
+                {data.performance.average_sale_time_days} day{data.performance.average_sale_time_days !== 1 ? 's' : ''}
+              </span>
             </div>
           </div>
         </div>
@@ -183,18 +189,28 @@ const Dashboard: React.FC = () => {
             </Link>
           </div>
           <div className="space-y-3">
-            {upcomingPayments.map((payment) => (
-              <div key={payment.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div>
-                  <p className="text-sm font-medium text-gray-900">{payment.customer}</p>
-                  <p className="text-xs text-gray-500">{payment.status}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900">{payment.amount}</p>
-                  <p className="text-xs text-gray-500">{payment.dueDate}</p>
-                </div>
+            {data.lists.upcoming_payments.length === 0 ? (
+              <div className="text-center py-8">
+                <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500">No upcoming payments</p>
               </div>
-            ))}
+            ) : (
+              data.lists.upcoming_payments.map((payment, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{payment.customer_name}</p>
+                    <p className="text-xs text-gray-500">
+                      Due {new Date(payment.due_date).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-gray-900">
+                      {formatCurrency(payment.amount_due)}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -209,24 +225,39 @@ const Dashboard: React.FC = () => {
             </Link>
           </div>
           <div className="space-y-3">
-            {recentSales.map((sale) => (
-              <div key={sale.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div>
-                  <p className="text-sm font-medium text-gray-900">{sale.customer}</p>
-                  <p className="text-xs text-gray-500">{sale.date}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900">{sale.amount}</p>
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    sale.status === 'Completed' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-blue-100 text-blue-800'
-                  }`}>
-                    {sale.status}
-                  </span>
-                </div>
+            {data.lists.recent_sales.length === 0 ? (
+              <div className="text-center py-8">
+                <ShoppingCart className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500">No recent sales</p>
               </div>
-            ))}
+            ) : (
+              data.lists.recent_sales.map((sale) => (
+                <div key={sale.sale_id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{sale.customer_name}</p>
+                    <p className="text-xs text-gray-500">
+                      {new Date(sale.sale_date).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-gray-900">
+                      {formatCurrency(sale.total_amount)}
+                    </p>
+                    <span className={`text-xs px-2 py-1 rounded-full ${
+                      sale.status === 'Completed' 
+                        ? 'bg-green-100 text-green-800' 
+                        : sale.status === 'In Progress'
+                        ? 'bg-blue-100 text-blue-800'
+                        : sale.status === 'Cancelled'
+                        ? 'bg-red-100 text-red-800'
+                        : 'bg-gray-100 text-gray-800'
+                    }`}>
+                      {sale.status}
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
