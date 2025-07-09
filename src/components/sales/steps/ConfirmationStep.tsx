@@ -95,11 +95,11 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ saleData, onComplet
                 <div>
                   <p className="text-sm font-medium text-gray-900">{item.product.name}</p>
                   <p className="text-xs text-gray-500">
-                    {item.product.price.toFixed(2)} × {item.quantity}
+                    {formatCurrency(item.product.price)} × {item.quantity}
                   </p>
                 </div>
                 <span className="text-sm font-medium text-gray-900">
-                  ${item.total.toFixed(2)}
+                  {formatCurrencyitem.total)}
                 </span>
               </div>
             ))}
@@ -107,7 +107,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ saleData, onComplet
               <div className="flex justify-between items-center">
                 <span className="text-base font-semibold text-gray-900">Total Amount:</span>
                 <span className="text-lg font-bold text-gray-900">
-                  ${saleData.totalAmount.toFixed(2)}
+                  {formatCurrency(saleData.totalAmount)}
                 </span>
               </div>
             </div>
@@ -137,7 +137,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ saleData, onComplet
             </p>
             {saleData.paymentType === 'Custom Installment' && saleData.customDownPaymentAmount && saleData.customDownPaymentAmount > 0 && (
               <p className="text-sm">
-                <span className="font-medium">Down Payment:</span> ${saleData.customDownPaymentAmount.toFixed(2)}
+                <span className="font-medium">Down Payment:</span> {formatCurrencysaleData.customDownPaymentAmount)}
               </p>
             )}
             {saleData.paymentType === 'Custom Installment' && (
