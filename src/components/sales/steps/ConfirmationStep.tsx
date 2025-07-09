@@ -2,7 +2,7 @@ import React from 'react';
 import { CheckCircle, User, ShoppingCart, CreditCard, FileText, Loader2 } from 'lucide-react';
 import { NewSaleData } from '../NewSale';
 import { useAuth } from '../../../contexts/AuthContext';
-import {formatCurrency} from "../../../utils/formattters";
+import {formatCurrency} from "../../../utils/formatters";
 
 
 interface ConfirmationStepProps {
