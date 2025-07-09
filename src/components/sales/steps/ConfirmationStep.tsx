@@ -137,7 +137,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ saleData, onComplet
             </p>
             {saleData.paymentType === 'Custom Installment' && saleData.customDownPaymentAmount && saleData.customDownPaymentAmount > 0 && (
               <p className="text-sm">
-                <span className="font-medium">Down Payment:</span> {formatCurrencysaleData.customDownPaymentAmount)}
+                <span className="font-medium">Down Payment:</span> {formatCurrency(saleData.customDownPaymentAmount)}
               </p>
             )}
             {saleData.paymentType === 'Custom Installment' && (
