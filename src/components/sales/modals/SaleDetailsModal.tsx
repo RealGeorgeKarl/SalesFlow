@@ -148,6 +148,7 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sa
   const handlePaymentSuccess = () => {
     setShowRecordPayment(false);
     onRefresh();
+    onClose();
   };
 
   const canRecordPayment = sale.status === 'In Progress' && sale.remaining_balance > 0;
