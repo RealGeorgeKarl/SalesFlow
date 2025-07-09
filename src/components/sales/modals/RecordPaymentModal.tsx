@@ -193,6 +193,7 @@ const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({ isOpen, onClose
                     <input
                       type="number"
                       min="0.01"
+                      step="0.01"
                       max={sale.remaining_balance}
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
