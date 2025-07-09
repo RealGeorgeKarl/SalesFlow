@@ -28,7 +28,8 @@ export const useDashboardData = (): UseDashboardDataReturn => {
       if (rpcData) {
         
         const responseItem = rpcData as GetUserDashboardDataRpcResponse;
-        console.log('respone item:', responseItem)
+        console.log('respone item:', responseItem);
+        console.log(responseItem.get_user_dashboard_data);
         const dashboardData = responseItem.get_user_dashboard_data;
         console.log('dashboard: ',dashboardData);
         if (dashboardData) {
