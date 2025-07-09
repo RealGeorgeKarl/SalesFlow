@@ -21,7 +21,6 @@ export const useDashboardData = (): UseDashboardDataReturn => {
     try {
       const { data: rpcData, error: rpcError } = await supabase.rpc('get_user_dashboard_data');
 
-      console.log(rpcData);
       if (rpcError) throw rpcError;
 
       // Handle the nested response structure
@@ -29,7 +28,7 @@ export const useDashboardData = (): UseDashboardDataReturn => {
         
         const responseItem = rpcData as GetUserDashboardDataRpcResponse;
         if (responseItem) {
-          setData(responseItem);
+          setData(rpcData);
         } else {
           throw new Error('No dashboard data found in response');
         }
