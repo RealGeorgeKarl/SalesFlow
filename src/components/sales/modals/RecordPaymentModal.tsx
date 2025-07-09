@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, CreditCard, DollarSign, Receipt, Loader2, AlertCircle, CheckCircle, Calendar, Clock } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { Sale, PaymentMethodType, PaymentMethod, RpcResult } from '../../../types';
-import {useAuth} from '../../contexts/AuthContext';
+import {useAuth} from '../../../contexts/AuthContext';
 
 interface RecordPaymentModalProps {
   isOpen: boolean;
