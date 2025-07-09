@@ -204,3 +204,48 @@ export type PaymentMethod =
   | 'Check'
   | 'Money Order'
   | 'Store Credit';
+
+// src/types/index.ts
+
+export interface DashboardKPIs {
+  today_sales: number;
+  active_sales_count: number;
+  total_customers_count: number;
+  overdue_payments_count: number;
+}
+
+export interface RecentSaleItem {
+  status: string;
+  sale_id: number;
+  sale_date: string; // ISO 8601 string
+  total_amount: number;
+  customer_name: string;
+}
+
+export interface UpcomingPaymentItem {
+  due_date: string; // ISO 8601 string
+  amount_due: number;
+  customer_name: string;
+}
+
+export interface DashboardLists {
+  recent_sales: RecentSaleItem[];
+  upcoming_payments: UpcomingPaymentItem[];
+}
+
+export interface DashboardPerformance {
+  monthly_revenue: number;
+  average_sale_time_days: number;
+  sales_this_month_count: number;
+}
+
+export interface DashboardData {
+  kpis: DashboardKPIs;
+  lists: DashboardLists;
+  performance: DashboardPerformance;
+}
+
+// This interface represents the direct output of your RPC function
+export interface GetUserDashboardDataRpcResponse {
+  get_user_dashboard_data: DashboardData;
+}
