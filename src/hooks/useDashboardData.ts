@@ -33,7 +33,7 @@ export const useDashboardData = (): UseDashboardDataReturn => {
         const dashboardData = responseItem.get_user_dashboard_data;
         console.log('dashboard: ',dashboardData);
         if (dashboardData) {
-          setData(dashboardData);
+          setData(responseItem);
         } else {
           throw new Error('No dashboard data found in response');
         }
