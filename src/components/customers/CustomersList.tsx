@@ -252,7 +252,7 @@ const CustomersList: React.FC = () => {
                   <span className="text-gray-500">Total Sales</span>
                 </div>
                 <span className="font-medium text-gray-900">
-                  {formatCurrency(customer.total_sales)}
+                  formatCurrency(customer.total_sales)
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm mt-1">
