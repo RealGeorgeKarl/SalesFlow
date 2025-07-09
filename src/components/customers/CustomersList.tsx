@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Search, Plus, User, Mail, Phone, Edit, Trash2, MapPin, Calendar, DollarSign, ShoppingCart, Loader2, AlertCircle, X } from 'lucide-react';
 import { useCustomers } from '../../hooks/useCustomers';
 import { Customer, SocialMedia } from '../../types';
+import {formathCurrency} from "../../utils/formatters";
+
 
 const CustomersList: React.FC = () => {
   const { customers, isLoading, error, addCustomer, editCustomer, deleteCustomer } = useCustomers();
