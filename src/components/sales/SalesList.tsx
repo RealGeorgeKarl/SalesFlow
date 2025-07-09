@@ -20,7 +20,7 @@ const SalesList: React.FC = () => {
     const matchesSearch = sale.customer && (
       `${sale.customer.first_name} ${sale.customer.last_name}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
       sale.seller_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      sale.id.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+      sale.id.toString().toLowerCase().includes(searchQuery.toLowerCase())
     );
     
     const matchesStatus = statusFilter === 'all' || sale.status.toLowerCase() === statusFilter;
