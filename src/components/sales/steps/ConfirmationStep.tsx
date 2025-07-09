@@ -99,7 +99,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ saleData, onComplet
                   </p>
                 </div>
                 <span className="text-sm font-medium text-gray-900">
-                  {formatCurrencyitem.total)}
+                  {formatCurrency(item.total)}
                 </span>
               </div>
             ))}
