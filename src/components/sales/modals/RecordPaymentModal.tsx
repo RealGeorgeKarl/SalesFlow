@@ -3,6 +3,8 @@ import { X, CreditCard, DollarSign, Receipt, Loader2, AlertCircle, CheckCircle, 
 import { supabase } from '../../../lib/supabase';
 import { Sale, PaymentMethodType, PaymentMethod, RpcResult } from '../../../types';
 import {useAuth} from '../../../contexts/AuthContext';
+import {formatCurrency} from "../../../utils/formatters";
+
 
 interface RecordPaymentModalProps {
   isOpen: boolean;
@@ -158,7 +160,7 @@ const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({ isOpen, onClose
                 <DollarSign className="h-5 w-5 text-blue-600" />
                 <h3 className="font-semibold text-blue-900">Total Amount</h3>
               </div>
-              <p className="text-2xl font-bold text-blue-900">${sale.total_amount.toFixed(2)}</p>
+              <p className="text-2xl font-bold text-blue-900">{formatCurrency(sale.total_amount)}</p>
             </div>
 
             <div className="bg-green-50 rounded-xl p-4 border border-green-100">
@@ -166,7 +168,7 @@ const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({ isOpen, onClose
                 <CheckCircle className="h-5 w-5 text-green-600" />
                 <h3 className="font-semibold text-green-900">Amount Paid</h3>
               </div>
-              <p className="text-2xl font-bold text-green-900">${sale.amount_paid.toFixed(2)}</p>
+              <p className="text-2xl font-bold text-green-900">{formatCurrency(sale.amount_paid)}</p>
             </div>
 
             <div className="bg-yellow-50 rounded-xl p-4 border border-yellow-100">
@@ -174,7 +176,7 @@ const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({ isOpen, onClose
                 <AlertCircle className="h-5 w-5 text-yellow-600" />
                 <h3 className="font-semibold text-yellow-900">Remaining Balance</h3>
               </div>
-              <p className="text-2xl font-bold text-yellow-900">${sale.remaining_balance.toFixed(2)}</p>
+              <p className="text-2xl font-bold text-yellow-900">{formatCurrency(sale.remaining_balance)}</p>
             </div>
           </div>
 
@@ -330,7 +332,7 @@ const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({ isOpen, onClose
                         </div>
                         <div className="text-right">
                           <p className="text-sm font-bold text-green-600">
-                            ${payment.amount_paid.toFixed(2)}
+                            {formatCurrency(payment.amount_paid)}
                           </p>
                         </div>
                       </div>
@@ -367,7 +369,7 @@ const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({ isOpen, onClose
                             {schedule.status}
                           </span>
                           <p className="text-sm font-bold text-gray-900">
-                            ${schedule.amount_due.toFixed(2)}
+                            {formatCurrency(schedule.amount_due)}
                           </p>
                         </div>
                       </div>
