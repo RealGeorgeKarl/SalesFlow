@@ -17,7 +17,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSubmit, 
     name: '',
     description: '',
     price: 0,
-    quantity: 0,
+    stock_quantity: 0,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
