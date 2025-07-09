@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, CreditCard, DollarSign, Receipt, Loader2, AlertCircle, CheckCircle, Calendar, Clock } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { Sale, PaymentMethodType, PaymentMethod, RpcResult } from '../../../types';
-import useAuth from '../../../contexts/AuthContext';
+import {useAuth} from '../../../contexts/AuthContext';
 
 interface RecordPaymentModalProps {
   isOpen: boolean;
@@ -19,7 +19,7 @@ const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({ isOpen, onClose
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [persona] = useAuth();
+  const {persona} = useAuth();
 
   // Payment method constants
   const PAYMENT_METHOD_TYPES: PaymentMethodType[] = ['Cash', 'Card', 'Online Payment', 'Other'];
