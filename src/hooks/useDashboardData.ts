@@ -27,7 +27,7 @@ export const useDashboardData = (): UseDashboardDataReturn => {
       // Handle the nested response structure
       if (rpcData) {
         
-        const responseItem = rpcData as GetUserDashboardDataRpcResponse;
+        const responseItem = rpcData;
         const dashboardData = responseItem.get_user_dashboard_data;
         console.log('dashboard: ',dashboardData);
         if (dashboardData) {
