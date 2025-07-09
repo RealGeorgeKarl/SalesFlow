@@ -26,9 +26,10 @@ export const useDashboardData = (): UseDashboardDataReturn => {
 
       // Handle the nested response structure
       if (rpcData && Array.isArray(rpcData) ) {
+        
         const responseItem = rpcData as GetUserDashboardDataRpcResponse;
         const dashboardData = responseItem.get_user_dashboard_data;
-        
+        console.log(dashboardData);
         if (dashboardData) {
           setData(dashboardData);
         } else {
