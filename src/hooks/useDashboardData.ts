@@ -21,12 +21,12 @@ export const useDashboardData = (): UseDashboardDataReturn => {
     try {
       const { data: rpcData, error: rpcError } = await supabase.rpc('get_user_dashboard_data');
 
-      console.log(rpcData[0]);
+      console.log(rpcData);
       if (rpcError) throw rpcError;
 
       // Handle the nested response structure
       if (rpcData && Array.isArray(rpcData) ) {
-        const responseItem = rpcData[0] as GetUserDashboardDataRpcResponse;
+        const responseItem = rpcData as GetUserDashboardDataRpcResponse;
         const dashboardData = responseItem.get_user_dashboard_data;
         
         if (dashboardData) {
