@@ -8,7 +8,7 @@
 export const formatCurrency = (number) => {
   // Check if the input is a valid number
   if (typeof number !== 'number' || isNaN(number)) {
-    return "";
+    return "0.00";
   }
 
   // Use toLocaleString for robust, locale-aware formatting.
