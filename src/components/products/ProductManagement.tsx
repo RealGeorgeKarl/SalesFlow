@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Package, Plus, Edit, Trash2, Loader2, AlertCircle, Search, DollarSign, Hash } from 'lucide-react';
+import { Package, Plus, Edit, Trash2, Loader2, AlertCircle, Search, DollarSign, Hash, Download } from 'lucide-react';
 import LoadingOverlay from '../common/LoadingOverlay';
 import { useProducts } from '../../hooks/useProducts';
 import { Category, Product } from '../../types';
 import CategoryModal from './modals/CategoryModal';
 import ProductModal from './modals/ProductModal';
 import DeleteConfirmModal from './modals/DeleteConfirmModal';
+import { exportProductsToCSV } from '../../utils/csvExport';
 import {formatCurrency} from "../../utils/formatters";
 
 
@@ -103,6 +104,10 @@ const ProductManagement: React.FC = () => {
     }
   };
 
+  const handleExportCSV = () => {
+    exportProductsToCSV(filteredProducts);
+  };
+
   return (
     <LoadingOverlay isLoading={isLoading} message="Loading products and categories...">
       <div className="p-6 max-w-7xl mx-auto space-y-8">
@@ -120,13 +125,23 @@ const ProductManagement: React.FC = () => {
               </div>
             </div>
           </div>
-          <button 
-            onClick={handleAddCategory}
-            className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            Add Category
-          </button>
+          <div className="flex space-x-3">
+            <button
+              onClick={handleExportCSV}
+              disabled={filteredProducts.length === 0}
+              className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export CSV
+            </button>
+            <button 
+              onClick={handleAddCategory}
+              className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Add Category
+            </button>
+          </div>
         </div>
       </div>
 

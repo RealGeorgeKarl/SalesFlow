@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Search, Plus, User, Mail, Phone, Edit, Trash2, MapPin, Calendar, DollarSign, ShoppingCart, Loader2, AlertCircle, X, CheckCircle } from 'lucide-react';
+import { Search, Plus, User, Mail, Phone, Edit, Trash2, MapPin, Calendar, DollarSign, ShoppingCart, Loader2, AlertCircle, X, CheckCircle, Download } from 'lucide-react';
 import LoadingOverlay from '../common/LoadingOverlay';
 import { useCustomers } from '../../hooks/useCustomers';
 import { Customer, SocialMedia } from '../../types';
+import { exportCustomersToCSV } from '../../utils/csvExport';
 import {formatCurrency} from "../../utils/formatters";
 
 
@@ -133,6 +134,10 @@ const CustomersList: React.FC = () => {
     }));
   };
 
+  const handleExportCSV = () => {
+    exportCustomersToCSV(filteredCustomers);
+  };
+
   return (
     <LoadingOverlay isLoading={isLoading} message="Loading customers...">
       <div className="p-6 max-w-7xl mx-auto">
@@ -142,13 +147,22 @@ const CustomersList: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900">Customer Management</h1>
           <p className="text-gray-600 mt-1">Manage customer information and contact details</p>
         </div>
-        <button
-          onClick={handleAddNew}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
-          <Plus className="h-5 w-5 mr-2" />
-          Add Customer
-        </button>
+        <div className="flex space-x-3">
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+          >
+            <Download className="h-5 w-5 mr-2" />
+            Export CSV
+          </button>
+          <button
+            onClick={handleAddNew}
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            Add Customer
+          </button>
+        </div>
       </div>
 
       {/* Error Display */}

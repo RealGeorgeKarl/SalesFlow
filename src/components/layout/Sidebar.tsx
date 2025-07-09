@@ -16,6 +16,7 @@ import {
   X,
   Key,
   CreditCard,
+  TrendingUp,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -31,6 +32,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
     { name: 'Audit Logs', href: '/audit-logs', icon: Shield, roles: ['Admin'] },*/}
   const navigationItems = [
     { name: 'Dashboard', href: '/dashboard', icon: BarChart3, roles: ['Admin', 'Salesperson'] },
+    { name: 'Analytics', href: '/analytics', icon: TrendingUp, roles: ['Admin'] },
     { name: 'New Sale', href: '/new-sale', icon: ShoppingCart, roles: ['Admin', 'Salesperson'] },
     { name: 'Sales', href: '/sales', icon: FileText, roles: ['Admin', 'Salesperson'] },
     { name: 'Customers', href: '/customers', icon: Users, roles: ['Admin', 'Salesperson'] },

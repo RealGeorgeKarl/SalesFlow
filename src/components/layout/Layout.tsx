@@ -13,6 +13,8 @@ const Layout: React.FC = () => {
     switch (pathname) {
       case '/dashboard':
         return 'Dashboard';
+      case '/analytics':
+        return 'Analytics Dashboard';
       case '/new-sale':
         return 'New Sale';
       case '/sales':

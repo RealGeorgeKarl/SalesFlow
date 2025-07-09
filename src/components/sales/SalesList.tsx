@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Filter, Eye, Plus, Calendar, DollarSign, Loader2, AlertCircle } from 'lucide-react';
+import { Search, Filter, Eye, Plus, Calendar, DollarSign, Loader2, AlertCircle, Download } from 'lucide-react';
 import LoadingOverlay from '../common/LoadingOverlay';
 import { useSales } from '../../hooks/useSales';
 import SaleDetailsModal from './modals/SaleDetailsModal';
 import { Sale } from '../../types';
+import { exportSalesToCSV } from '../../utils/csvExport';
 import {formatCurrency} from "../../utils/formatters";
 
 
@@ -73,11 +74,37 @@ const SalesList: React.FC = () => {
     setSelectedSale(null);
   };
 
+  const handleExportCSV = () => {
+    exportSalesToCSV(filteredSales);
+  };
+
   return (
     <LoadingOverlay isLoading={isLoading} message="Loading sales data...">
       <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Sales Management</h1>
+          <p className="text-gray-600 mt-1">Track and manage all sales transactions</p>
+        </div>
+        <div className="flex space-x-3">
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+          >
+            <Download className="h-5 w-5 mr-2" />
+            Export CSV
+          </button>
+          <Link
+            to="/new-sale"
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            New Sale
+          </Link>
+        </div>
+      </div>
+
         {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -114,15 +141,6 @@ const SalesList: React.FC = () => {
           </div>
         </div>
       </div>
-        <Link
-          to="/new-sale"
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
-          <Plus className="h-5 w-5 mr-2" />
-          New Sale
-        </Link>
-      </div>
-      
 
       {/* Error Display */}
       {error && (

@@ -13,6 +13,7 @@ import CustomersList from './components/customers/CustomersList';
 import PersonaManagement from './components/admin/PersonaManagement';
 import SubscriptionDetails from './components/admin/SubscriptionDetails';
 import ProductManagement from './components/products/ProductManagement';
+import AnalyticsDashboard from './components/analytics/AnalyticsDashboard';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -63,6 +64,7 @@ function App() {
             }
           >
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="analytics" element={<AnalyticsDashboard />} />
             <Route path="new-sale" element={<NewSale />} />
             <Route path="sales" element={<SalesList />} />
             <Route path="customers" element={<CustomersList />} />
