@@ -269,8 +269,7 @@ const SalesList: React.FC = () => {
 
       {/* Sales Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div className="max-h-[500px] overflow-y-auto">
-        <div className="overflow-x-auto">
+        <div className="max-h-[500px] overflow-y-auto overflow-x-auto">
           <table className="w-full table-fixed">
             <thead className="bg-gray-50 sticky top-0 z-10">
     <tr>
@@ -387,7 +386,6 @@ const SalesList: React.FC = () => {
               ))}
             </tbody>
           </table>
-        </div>
         </div>
       </div>
 
