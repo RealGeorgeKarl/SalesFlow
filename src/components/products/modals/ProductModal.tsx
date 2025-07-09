@@ -17,7 +17,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSubmit, 
     name: '',
     description: '',
     price: 0,
-    stock_quantity: 0,
+    quantity: 0,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -29,7 +29,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSubmit, 
         name: product?.name || '',
         description: product?.description || '',
         price: product?.price || 0,
-        quantity: product?.stock_quantity || 0,
+        quantity: product?.quantity || 0,
       });
       setError('');
       setSuccess('');
