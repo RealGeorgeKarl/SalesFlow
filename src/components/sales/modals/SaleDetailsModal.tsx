@@ -102,6 +102,7 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sa
       }
 
       onRefresh();
+      onClose();
       return true;
     } catch (err) {
       console.error('Failed to terminate sale:', err);
@@ -126,6 +127,7 @@ const SaleDetailsModal: React.FC<SaleDetailsModalProps> = ({ isOpen, onClose, sa
       }
 
       onRefresh();
+      f();
       return true;
     } catch (err) {
       console.error('Failed to cancel sale:', err);
